@@ -11,13 +11,13 @@ import { formatCurrency } from '@/lib/formatters';
 export default function Ajustes() {
   const { user, plan, signOut } = useAuth();
   const { toast } = useToast();
-
   const proLaborePercent = user?.user_metadata?.pro_labore_percent ?? 50;
-  const catalog = user?.user_metadata?.catalog ?? [];
-  const [newProduct, setNewProduct] = useState({ nome: '', valor: '', custo: '' });
+
+
   const [newClient, setNewClient] = useState({ nome: '', contato: '' });
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const clients = user?.user_metadata?.clients ?? [];
+
 
   const handleUpdateSetting = async (key: string, value: any) => {
     const { error } = await supabase.auth.updateUser({
@@ -33,10 +33,23 @@ export default function Ajustes() {
   };
 
   const handleUpdatePlan = async (newPlan: 'free' | 'pro') => {
-    // For demo purposes, we still allow manual toggle, 
-    // but we'll call redirectToCheckout for 'pro'
     if (newPlan === 'pro' && plan === 'free') {
-      await redirectToCheckout('price_placeholder');
+      try {
+        // IDs de preço do Stripe (oficiais do seu dashboard)
+        const priceId = billingCycle === 'monthly' 
+          ? 'price_1TlOZo22TLyYgOiQsyDpUHQN' // Mensal
+          : 'price_1TlOZP22TLyYgOiQ5MzDxoxF'; // Anual
+        
+        await redirectToCheckout(priceId);
+        return; // Retorna para não atualizar o plano localmente antes do pagamento
+      } catch (error: any) {
+        toast({ 
+          title: "Erro ao iniciar checkout", 
+          description: error.message, 
+          variant: "destructive" 
+        });
+        return;
+      }
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -50,6 +63,7 @@ export default function Ajustes() {
       setTimeout(() => window.location.reload(), 1000);
     }
   };
+
 
   return (
     <div className="space-y-6 p-4 pb-24">
@@ -226,67 +240,6 @@ export default function Ajustes() {
                 >
                   {val}%
                 </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 px-2">Catálogo de Produtos</h2>
-        <div className="glass p-6 rounded-[2rem] border-white/5 space-y-6">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-3">
-              <Input 
-                placeholder="Nome do Produto (ex: Camiseta Personalizada)" 
-                value={newProduct.nome}
-                onChange={e => setNewProduct({...newProduct, nome: e.target.value})}
-                className="rounded-xl border-white/10 bg-background/40"
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <Input 
-                  placeholder="Venda (R$)" 
-                  value={newProduct.valor}
-                  onChange={e => setNewProduct({...newProduct, valor: e.target.value})}
-                  className="rounded-xl border-white/10 bg-background/40"
-                />
-                <Input 
-                  placeholder="Custo (R$)" 
-                  value={newProduct.custo}
-                  onChange={e => setNewProduct({...newProduct, custo: e.target.value})}
-                  className="rounded-xl border-white/10 bg-background/40"
-                />
-              </div>
-              <Button 
-                onClick={() => {
-                  if(!newProduct.nome || !newProduct.valor) return;
-                  const item = { id: Date.now().toString(), ...newProduct };
-                  handleUpdateSetting('catalog', [...catalog, item]);
-                  setNewProduct({ nome: '', valor: '', custo: '' });
-                }}
-                className="w-full rounded-xl premium-gradient gap-2 h-11"
-              >
-                <Plus className="h-4 w-4" /> Adicionar ao Catálogo
-              </Button>
-            </div>
-
-            <div className="space-y-2 mt-4">
-              {catalog.length === 0 && (
-                <p className="text-[10px] text-center text-muted-foreground py-4">Nenhum produto cadastrado.</p>
-              )}
-              {catalog.map((p: any) => (
-                <div key={p.id} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
-                  <div>
-                    <p className="text-xs font-bold text-foreground">{p.nome}</p>
-                    <p className="text-[10px] text-muted-foreground">Venda: {formatCurrency(Number(p.valor))} | Custo: {formatCurrency(Number(p.custo))}</p>
-                  </div>
-                  <button 
-                    onClick={() => handleUpdateSetting('catalog', catalog.filter((i: any) => i.id !== p.id))}
-                    className="p-2 text-muted-foreground/40 hover:text-rose-500 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
               ))}
             </div>
           </div>

@@ -9,6 +9,7 @@ import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
 import Encomendas from "@/pages/Encomendas";
 import Financas from "@/pages/Financas";
+import Produtos from "@/pages/Produtos";
 import Ajustes from "@/pages/Ajustes";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +39,7 @@ function AppRoutes() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/encomendas" element={<Encomendas />} />
+            <Route path="/produtos" element={<Produtos />} />
             <Route path="/financas" element={<Financas />} />
             <Route path="/ajustes" element={<Ajustes />} />
             <Route path="*" element={<NotFound />} />

@@ -31,7 +31,7 @@ export default function Encomendas() {
   const [form, setForm] = useState({ cliente: '', descricao: '', valor: '', custo: '' });
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const catalog = user?.user_metadata?.catalog ?? [];
+  const [catalog, setCatalog] = useState<any[]>([]);
   const clients = user?.user_metadata?.clients ?? [];
 
   const limitReached = plan === 'free' && encomendas.length >= 10;
@@ -46,7 +46,17 @@ export default function Encomendas() {
     setEncomendas((data as Encomenda[]) ?? []);
   };
 
-  useEffect(() => { fetchEncomendas(); }, [user]);
+  const fetchCatalog = async () => {
+
+    if (!user) return;
+    const { data } = await supabase.from('produtos').select('*').order('nome');
+    setCatalog(data ?? []);
+  };
+
+  useEffect(() => { 
+    fetchEncomendas(); 
+    fetchCatalog();
+  }, [user]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,7 +154,7 @@ export default function Encomendas() {
                           variant="outline"
                           size="sm"
                           className="rounded-xl border-white/10 h-8 text-[10px] bg-white/5 flex-shrink-0"
-                          onClick={() => setForm({ ...form, descricao: p.nome, valor: p.valor, custo: p.custo })}
+                          onClick={() => setForm({ ...form, descricao: p.nome, valor: p.valor.toString().replace('.', ','), custo: p.custo.toString().replace('.', ',') })}
                         >
                           <ShoppingBag className="h-3 w-3 mr-1.5" /> {p.nome}
                         </Button>

@@ -1,12 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Package, DollarSign, Settings } from 'lucide-react';
+import { Home, Package, DollarSign, Settings, ShoppingBag } from 'lucide-react';
 
 const tabs = [
   { path: '/', label: 'Home', icon: Home },
+  { path: '/produtos', label: 'Catálogo', icon: ShoppingBag },
   { path: '/encomendas', label: 'Encomendas', icon: Package },
   { path: '/financas', label: 'Finanças', icon: DollarSign },
   { path: '/ajustes', label: 'Ajustes', icon: Settings },
 ];
+
 
 export default function BottomNav() {
   const { pathname } = useLocation();
