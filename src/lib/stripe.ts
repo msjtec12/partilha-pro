@@ -13,11 +13,15 @@ export const redirectToCheckout = async (priceId: string) => {
   
   if (error) {
     console.error('Error creating checkout session:', error);
-    throw error;
+    // Tenta extrair a mensagem de erro da resposta se possível
+    const errorMessage = error instanceof Error ? error.message : 'Erro ao processar pagamento';
+    throw new Error(errorMessage);
   }
   
   if (data?.url) {
     window.location.href = data.url;
+  } else if (data?.error) {
+    throw new Error(data.error);
   } else {
     throw new Error('Link de checkout não recebido');
   }
