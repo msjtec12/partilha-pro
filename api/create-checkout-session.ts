@@ -1,20 +1,21 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-01-27.acacia' as any,
-});
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
 export default async function handler(req: any, res: any) {
-  // Handle CORS
+  // CORS configuration
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  };
+
+  // Apply CORS headers to all responses
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
   if (req.method === 'OPTIONS') {
-    return res.status(200).send('ok');
+    return res.status(200).json({ ok: true });
   }
 
   if (req.method !== 'POST') {
@@ -22,14 +23,23 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    const stripeSecret = process.env.STRIPE_SECRET_KEY;
+    
+    // Log de diagnóstico (seguro: mostra apenas o prefixo)
+    const keyPrefix = stripeSecret ? stripeSecret.substring(0, 7) : 'NULO';
+    console.log(`Iniciando Stripe com chave: ${keyPrefix}...`);
+
+    if (!stripeSecret) {
+      throw new Error('STRIPE_SECRET_KEY não configurada na Vercel');
+    }
+
+    const stripe = new Stripe(stripeSecret, {
+      apiVersion: '2025-01-27.acacia' as any,
+    });
+
     const { priceId } = req.body;
     if (!priceId) {
       return res.status(400).json({ error: 'priceId é obrigatório' });
-    }
-
-    const stripeSecret = process.env.STRIPE_SECRET_KEY;
-    if (!stripeSecret) {
-      return res.status(500).json({ error: 'STRIPE_SECRET_KEY não configurada no Vercel' });
     }
 
     // Tenta obter os dados do usuário via header Authorization
