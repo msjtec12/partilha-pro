@@ -22,8 +22,9 @@ export const redirectToCheckout = async (priceId: string) => {
   const data = await response.json();
 
   if (!response.ok) {
-    console.error('Error creating checkout session:', data.error);
-    throw new Error(data.error || 'Erro ao processar pagamento');
+    console.error('Error creating checkout session:', data.error, data.details);
+    const fullError = data.details ? `${data.error} (${data.details})` : (data.error || 'Erro ao processar pagamento');
+    throw new Error(fullError);
   }
   
   if (data?.url) {

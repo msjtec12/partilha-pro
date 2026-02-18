@@ -59,26 +59,35 @@ export default async function handler(req: any, res: any) {
     console.log(`Criando sessão para: ${priceId}, Usuário: ${userId}`);
 
     // Create checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: `${req.headers.origin}/ajustes?success=true`,
+        cancel_url: `${req.headers.origin}/ajustes?canceled=true`,
+        customer_email: userEmail,
+        metadata: {
+          userId: userId,
         },
-      ],
-      mode: 'subscription',
-      success_url: `${req.headers.origin}/ajustes?success=true`,
-      cancel_url: `${req.headers.origin}/ajustes?canceled=true`,
-      customer_email: userEmail,
-      metadata: {
-        userId: userId,
-      },
-    });
+      });
 
-    return res.status(200).json({ url: session.url });
+      return res.status(200).json({ url: session.url });
+    } catch (stripeError: any) {
+      console.error('Erro detalhado do Stripe:', stripeError);
+      return res.status(400).json({ 
+        error: stripeError.message,
+        details: stripeError.raw?.message || stripeError.type,
+        code: stripeError.code
+      });
+    }
   } catch (error: any) {
     console.error('Erro na função create-checkout-session:', error.message);
-    return res.status(400).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
