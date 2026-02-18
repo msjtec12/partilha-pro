@@ -83,8 +83,15 @@ export default function Ajustes() {
             <img src="/logo.png" alt="Logo" className="h-10 object-contain" />
           </div>
           <div>
-            <p className="text-lg font-bold tracking-tight text-foreground">Partilha Pro</p>
-            <p className="text-sm font-medium text-muted-foreground">{user?.email}</p>
+            <p className="text-lg font-bold tracking-tight text-foreground">
+              {user?.user_metadata?.workshop_name || 'Partilha Pro'}
+            </p>
+            <div className="flex flex-col">
+              {user?.user_metadata?.full_name && (
+                <p className="text-xs font-semibold text-muted-foreground/80">{user.user_metadata.full_name}</p>
+              )}
+              <p className="text-[10px] font-medium text-muted-foreground">{user?.email}</p>
+            </div>
           </div>
         </div>
       </div>

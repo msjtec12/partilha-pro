@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Package } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [searchParams] = useSearchParams();
+  const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [workshopName, setWorkshopName] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
@@ -19,7 +23,7 @@ export default function Auth() {
 
     const { error } = isLogin
       ? await signIn(email, password)
-      : await signUp(email, password);
+      : await signUp(email, password, { full_name: fullName, workshop_name: workshopName });
 
     if (error) {
       toast({
@@ -50,11 +54,35 @@ export default function Auth() {
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Partilha Pro</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sua oficina organizada, lucro no bolso.
+            {isLogin ? 'Sua oficina organizada, lucro no bolso.' : 'Comece sua jornada profissional hoje.'}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && (
+            <>
+              <div className="space-y-2">
+                <Input
+                  type="text"
+                  placeholder="Nome Completo"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  className="h-12 rounded-xl bg-background/50 border-white/10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Input
+                  type="text"
+                  placeholder="Nome da Oficina"
+                  value={workshopName}
+                  onChange={(e) => setWorkshopName(e.target.value)}
+                  required
+                  className="h-12 rounded-xl bg-background/50 border-white/10"
+                />
+              </div>
+            </>
+          )}
           <div className="space-y-2">
             <Input
               type="email"
@@ -77,7 +105,7 @@ export default function Auth() {
             />
           </div>
           <Button type="submit" className="h-12 w-full text-base font-semibold rounded-xl premium-gradient shadow-lg shadow-primary/20" disabled={loading}>
-            {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Começar Agora'}
+            {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Crie sua conta'}
           </Button>
         </form>
 
@@ -87,7 +115,7 @@ export default function Auth() {
             onClick={() => setIsLogin(!isLogin)}
             className="font-bold text-primary hover:text-success transition-colors"
           >
-            {isLogin ? 'Crie sua conta' : 'Acesse agora'}
+            {isLogin ? 'Cadastre-se' : 'Acesse agora'}
           </button>
         </p>
       </div>
