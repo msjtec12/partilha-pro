@@ -2,7 +2,7 @@ import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-01-27.acacia' as any,
 });
 
 const corsHeaders = {
@@ -44,7 +44,6 @@ export default async function handler(req: any, res: any) {
           process.env.SUPABASE_ANON_KEY || ''
         );
 
-        // O token JWT vem como "Bearer <token>"
         const token = authHeader.replace('Bearer ', '');
         const { data: { user } } = await supabaseClient.auth.getUser(token);
         
