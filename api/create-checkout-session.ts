@@ -43,19 +43,22 @@ export default async function handler(req: any, res: any) {
     }
     
     const cleanPriceId = priceId.trim();
-    console.log(`[DIAGNOSTICO] Usando Price ID: [${cleanPriceId}] (Tamanho: ${cleanPriceId.length})`);
+    console.log(`[BUSCA] Tentando encontrar preço para: ${cleanPriceId}`);
 
-    // TESTE: Listar TODOS os preços ativos para ver o que a API enxerga
-    let foundIds: string[] = [];
+    // Busca Inteligente: Listar preços e encontrar o correspondente (ignora case)
+    let finalPriceId = cleanPriceId;
     try {
       const allPrices = await stripe.prices.list({ active: true, limit: 100 });
-      foundIds = allPrices.data.map(p => p.id);
-      console.log('[DIAGNOSTICO] IDs visíveis nesta conta:', foundIds.join(', '));
+      const match = allPrices.data.find(p => p.id.toLowerCase() === cleanPriceId.toLowerCase());
       
-      const isVisible = foundIds.includes(cleanPriceId);
-      console.log(`[DIAGNOSTICO] O ID buscado está na lista? ${isVisible ? 'SIM' : 'NÃO'}`);
+      if (match) {
+        console.log(`[SUCESSO] Preço oficial encontrado: ${match.id}`);
+        finalPriceId = match.id;
+      } else {
+        console.warn(`[AVISO] Preço ${cleanPriceId} não encontrado na lista de ${allPrices.data.length} preços ativos.`);
+      }
     } catch (e) {
-      console.warn('[DIAGNOSTICO] Falha ao listar preços:', e);
+      console.error('[ERRO] Falha na busca inteligente de preços:', e);
     }
 
     // Tenta obter os dados do usuário via header Authorization
@@ -82,14 +85,14 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    console.log(`Criando sessão para: ${cleanPriceId}, Usuário: ${userId}`);
+    console.log(`Criando sessão para: ${finalPriceId}, Usuário: ${userId}`);
 
     // Create checkout session
     try {
       const session = await stripe.checkout.sessions.create({
         line_items: [
           {
-            price: cleanPriceId,
+            price: finalPriceId,
             quantity: 1,
           },
         ],
