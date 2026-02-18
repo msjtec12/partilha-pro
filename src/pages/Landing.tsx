@@ -40,7 +40,7 @@ export default function Landing() {
             <Star className="h-3 w-3 fill-primary" /> O Futuro da sua Oficina
           </div>
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter max-w-4xl mx-auto leading-[1.1]">
-            Sua oficina <span className="text-primary italic">organizada</span>, seu lucro sob <span className="premium-text-gradient">controle</span>.
+            Sua oficina <span className="text-primary italic">organizada</span>, seu negócio <span className="premium-text-gradient">profissional</span>.
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
             A ferramenta definitiva para artesãos e donos de oficinas que buscam profissionalismo, clareza financeira e crescimento real.
@@ -67,19 +67,6 @@ export default function Landing() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
             </div>
-            
-            {/* Floating Stats Card Mockup */}
-            <div className="absolute -bottom-6 -right-6 md:right-12 glass p-6 rounded-3xl border-white/10 shadow-2xl animate-bounce-slow hidden sm:block">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center text-success">
-                  <TrendingUp className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Lucro Mensal</p>
-                  <p className="text-xl font-black text-foreground">+ R$ 4.250,00</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -101,7 +88,7 @@ export default function Landing() {
             <FeatureCard 
               icon={<TrendingUp className="h-6 w-6" />}
               title="Fluxo de Caixa"
-              description="Visualize seus lucros, despesas e pro-labore com gráficos inteligentes e automáticos."
+              description="Visualize suas finanças, despesas e organização com relatórios inteligentes e práticos."
             />
             <FeatureCard 
               icon={<Zap className="h-6 w-6" />}
