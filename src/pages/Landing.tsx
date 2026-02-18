@@ -61,9 +61,9 @@ export default function Landing() {
             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75 -z-10" />
             <div className="glass rounded-[2.5rem] p-4 border-white/10 shadow-3xl overflow-hidden group">
               <img 
-                src="https://images.unsplash.com/photo-1510519133417-2ad04b9c5826?auto=format&fit=crop&q=80&w=2070" 
-                alt="Artesanato de luxo" 
-                className="rounded-[2rem] w-full object-cover shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]"
+                src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=2070" 
+                alt="Artesanato Manual Profissional" 
+                className="rounded-[2rem] w-full object-cover shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] aspect-video md:aspect-[21/9]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
             </div>
