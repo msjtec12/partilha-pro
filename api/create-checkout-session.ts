@@ -45,10 +45,15 @@ export default async function handler(req: any, res: any) {
     const cleanPriceId = priceId.trim();
     console.log(`[DIAGNOSTICO] Usando Price ID: [${cleanPriceId}] (Tamanho: ${cleanPriceId.length})`);
 
-    // TESTE: Listar preços ativos para ver o que a API enxerga
+    // TESTE: Listar TODOS os preços ativos para ver o que a API enxerga
+    let foundIds: string[] = [];
     try {
-      const activePrices = await stripe.prices.list({ limit: 5, active: true });
-      console.log('[DIAGNOSTICO] Preços ativos encontrados na conta:', activePrices.data.map(p => p.id).join(', '));
+      const allPrices = await stripe.prices.list({ active: true, limit: 100 });
+      foundIds = allPrices.data.map(p => p.id);
+      console.log('[DIAGNOSTICO] IDs visíveis nesta conta:', foundIds.join(', '));
+      
+      const isVisible = foundIds.includes(cleanPriceId);
+      console.log(`[DIAGNOSTICO] O ID buscado está na lista? ${isVisible ? 'SIM' : 'NÃO'}`);
     } catch (e) {
       console.warn('[DIAGNOSTICO] Falha ao listar preços:', e);
     }
@@ -82,7 +87,6 @@ export default async function handler(req: any, res: any) {
     // Create checkout session
     try {
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
         line_items: [
           {
             price: cleanPriceId,
@@ -103,7 +107,7 @@ export default async function handler(req: any, res: any) {
       console.error('Erro detalhado do Stripe:', stripeError);
       return res.status(400).json({ 
         error: stripeError.message,
-        details: `ID: ${cleanPriceId} | Code: ${stripeError.code} | Type: ${stripeError.type}`,
+        details: `Visíveis: ${foundIds.slice(0, 3).join(', ')}... | Total: ${foundIds.length}`,
         code: stripeError.code
       });
     }
