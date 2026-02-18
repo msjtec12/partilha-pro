@@ -55,6 +55,32 @@ export default function Landing() {
               <CheckCircle2 className="h-4 w-4 text-success" /> Sem cartão de crédito
             </div>
           </div>
+
+          {/* Hero Image / Mockup */}
+          <div className="mt-20 relative max-w-5xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75 -z-10" />
+            <div className="glass rounded-[2.5rem] p-4 border-white/10 shadow-3xl overflow-hidden group">
+              <img 
+                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2070" 
+                alt="Partilha Pro Dashboard Mockup" 
+                className="rounded-[2rem] w-full object-cover shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
+            </div>
+            
+            {/* Floating Stats Card Mockup */}
+            <div className="absolute -bottom-6 -right-6 md:right-12 glass p-6 rounded-3xl border-white/10 shadow-2xl animate-bounce-slow hidden sm:block">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center text-success">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Lucro Mensal</p>
+                  <p className="text-xl font-black text-foreground">+ R$ 4.250,00</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

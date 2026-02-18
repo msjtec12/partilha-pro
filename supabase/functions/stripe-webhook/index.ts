@@ -31,14 +31,24 @@ serve(async (req) => {
       const userId = session.metadata?.userId;
 
       if (userId) {
-        // Update user plan to 'pro' using admin client to bypass RLS
-        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        // Update profile plan to 'pro' using admin client to bypass RLS
+        const { error: profileError } = await supabaseAdmin
+          .from("profiles")
+          .update({ 
+            plan: "pro",
+            stripe_customer_id: session.customer as string,
+            stripe_subscription_id: session.subscription as string
+          })
+          .eq("id", userId);
+
+        if (profileError) throw profileError;
+
+        // Also update auth metadata for redundancy (optional but helpful)
+        await supabaseAdmin.auth.admin.updateUserById(userId, {
           user_metadata: { plan: "pro" }
         });
-
-        if (error) throw error;
         
-        console.log(`User ${userId} upgraded to pro!`);
+        console.log(`User ${userId} upgraded to pro in profiles table!`);
       }
     }
 

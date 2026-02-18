@@ -14,7 +14,7 @@ interface ChartData {
 }
 
 export default function Dashboard() {
-  const { user, plan } = useAuth();
+  const { user, plan, proLaborePercent, workshopName } = useAuth();
   const [totalDespesas, setTotalDespesas] = useState(0);
   const [totalEncomendas, setTotalEncomendas] = useState(0);
   const [realProfit, setRealProfit] = useState(0);
@@ -24,7 +24,6 @@ export default function Dashboard() {
   const [pipelineProfit, setPipelineProfit] = useState(0);
   const [pipelineValue, setPipelineValue] = useState(0);
   
-  const proLaborePercent = user?.user_metadata?.pro_labore_percent ?? 50;
   const reservePercent = 100 - proLaborePercent;
 
   useEffect(() => {
@@ -100,7 +99,7 @@ export default function Dashboard() {
     <div className="space-y-6 p-4 pb-24">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Visão Geral</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{workshopName}</h1>
           <p className="text-sm text-muted-foreground mt-1 text-balance">O pulso do seu negócio hoje.</p>
         </div>
         <div className="h-10 w-10 glass rounded-full flex items-center justify-center border-white/10 shadow-lg">

@@ -36,7 +36,7 @@ const categoriaBadge: Record<string, string> = {
 };
 
 export default function Financas() {
-  const { user, plan } = useAuth();
+  const { user, plan, proLaborePercent } = useAuth();
   const { toast } = useToast();
   const [despesas, setDespesas] = useState<Despesa[]>([]);
   const [fechamentos, setFechamentos] = useState<Fechamento[]>([]);
@@ -115,7 +115,6 @@ export default function Financas() {
 
     const periodo = `${startOfMonth.toLocaleDateString('pt-BR')} - ${now.toLocaleDateString('pt-BR')}`;
 
-    const proLaborePercent = user?.user_metadata?.pro_labore_percent ?? 50;
     const reservePercent = 100 - proLaborePercent;
 
     const { error } = await supabase.from('fechamentos').insert({

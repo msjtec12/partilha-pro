@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      clientes: {
+        Row: {
+          contato: string | null
+          created_at: string
+          id: string
+          nome: string
+          user_id: string
+        }
+        Insert: {
+          contato?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+          user_id: string
+        }
+        Update: {
+          contato?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       despesas: {
         Row: {
           categoria: string
@@ -109,6 +133,74 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      produtos: {
+        Row: {
+          created_at: string
+          custo: number
+          id: string
+          nome: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          custo?: number
+          id?: string
+          nome: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          custo?: number
+          id?: string
+          nome?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          full_name: string | null
+          id: string
+          plan: string
+          pro_labore_percent: number
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string | null
+          workshop_name: string | null
+        }
+        Insert: {
+          full_name?: string | null
+          id: string
+          plan?: string
+          pro_labore_percent?: number
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+          workshop_name?: string | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string
+          plan?: string
+          pro_labore_percent?: number
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+          workshop_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

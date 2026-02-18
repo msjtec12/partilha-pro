@@ -32,7 +32,7 @@ export default function Encomendas() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [catalog, setCatalog] = useState<any[]>([]);
-  const clients = user?.user_metadata?.clients ?? [];
+  const [clients, setClients] = useState<any[]>([]);
 
   const limitReached = plan === 'free' && encomendas.length >= 10;
 
@@ -47,15 +47,21 @@ export default function Encomendas() {
   };
 
   const fetchCatalog = async () => {
-
     if (!user) return;
     const { data } = await supabase.from('produtos').select('*').order('nome');
     setCatalog(data ?? []);
   };
 
+  const fetchClients = async () => {
+    if (!user) return;
+    const { data } = await supabase.from('clientes').select('*').order('nome');
+    setClients(data ?? []);
+  };
+
   useEffect(() => { 
     fetchEncomendas(); 
     fetchCatalog();
+    fetchClients();
   }, [user]);
 
   const handleCreate = async (e: React.FormEvent) => {

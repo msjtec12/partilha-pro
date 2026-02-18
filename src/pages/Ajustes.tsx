@@ -4,25 +4,77 @@ import { LogOut, Package, Crown, CheckCircle2, ArrowRight, Download, Users, User
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { redirectToCheckout } from '@/lib/stripe';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { formatCurrency } from '@/lib/formatters';
 
-export default function Ajustes() {
-  const { user, plan, signOut } = useAuth();
-  const { toast } = useToast();
-  const proLaborePercent = user?.user_metadata?.pro_labore_percent ?? 50;
+interface Cliente {
+  id: string;
+  nome: string;
+  contato: string | null;
+}
 
+export default function Ajustes() {
+  const { user, profile, plan, proLaborePercent, workshopName, fullName, signOut } = useAuth();
+  const { toast } = useToast();
 
   const [newClient, setNewClient] = useState({ nome: '', contato: '' });
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
-  const clients = user?.user_metadata?.clients ?? [];
+  const [clients, setClients] = useState<Cliente[]>([]);
 
+  const fetchClients = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('clientes')
+      .select('*')
+      .order('nome', { ascending: true });
+    
+    if (error) {
+      console.error('Erro ao buscar clientes:', error);
+    } else {
+      setClients(data || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchClients();
+  }, [user]);
+
+  const handleAddClient = async () => {
+    if (!user || !newClient.nome) return;
+
+    const { error } = await supabase.from('clientes').insert({
+      user_id: user.id,
+      nome: newClient.nome,
+      contato: newClient.contato || null,
+    });
+
+    if (error) {
+      toast({ title: "Erro ao adicionar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Cliente adicionado!" });
+      setNewClient({ nome: '', contato: '' });
+      fetchClients();
+    }
+  };
+
+  const handleDeleteClient = async (id: string) => {
+    const { error } = await supabase.from('clientes').delete().eq('id', id);
+
+    if (error) {
+      toast({ title: "Erro ao remover", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Cliente removido" });
+      fetchClients();
+    }
+  };
 
   const handleUpdateSetting = async (key: string, value: any) => {
-    const { error } = await supabase.auth.updateUser({
-      data: { [key]: value }
-    });
+    if (!user) return;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ [key]: value })
+      .eq('id', user.id);
 
     if (error) {
       toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" });
@@ -35,13 +87,12 @@ export default function Ajustes() {
   const handleUpdatePlan = async (newPlan: 'free' | 'pro') => {
     if (newPlan === 'pro' && plan === 'free') {
       try {
-        // IDs de preço do Stripe (oficiais do seu dashboard)
         const priceId = billingCycle === 'monthly' 
-          ? 'price_1T2DSv22TLyYgOiQ6pELUMXj' // Novo Mensal (Correto)
-          : 'price_1T2DVO22TLyYgOiQ6O34t1mi'; // Novo Anual (Corrigido de O84 para O34)
+          ? 'price_1T2DSv22TLyYgOiQ6pELUMXj'
+          : 'price_1T2DVO22TLyYgOiQ6O34t1mi';
         
         await redirectToCheckout(priceId);
-        return; // Retorna para não atualizar o plano localmente antes do pagamento
+        return;
       } catch (error: any) {
         toast({ 
           title: "Erro ao iniciar checkout", 
@@ -52,9 +103,11 @@ export default function Ajustes() {
       }
     }
 
-    const { error } = await supabase.auth.updateUser({
-      data: { plan: newPlan }
-    });
+    if (!user) return;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ plan: newPlan })
+      .eq('id', user.id);
 
     if (error) {
       toast({ title: "Erro ao atualizar plano", description: error.message, variant: "destructive" });
@@ -84,11 +137,11 @@ export default function Ajustes() {
           </div>
           <div>
             <p className="text-lg font-bold tracking-tight text-foreground">
-              {user?.user_metadata?.workshop_name || 'Partilha Pro'}
+              {workshopName}
             </p>
             <div className="flex flex-col">
-              {user?.user_metadata?.full_name && (
-                <p className="text-xs font-semibold text-muted-foreground/80">{user.user_metadata.full_name}</p>
+              {fullName && (
+                <p className="text-xs font-semibold text-muted-foreground/80">{fullName}</p>
               )}
               <p className="text-[10px] font-medium text-muted-foreground">{user?.email}</p>
             </div>
@@ -271,12 +324,7 @@ export default function Ajustes() {
                 className="rounded-xl border-white/10 bg-background/40"
               />
               <Button 
-                onClick={() => {
-                  if(!newClient.nome) return;
-                  const item = { id: Date.now().toString(), ...newClient };
-                  handleUpdateSetting('clients', [...clients, item]);
-                  setNewClient({ nome: '', contato: '' });
-                }}
+                onClick={handleAddClient}
                 className="w-full rounded-xl glass border-white/10 gap-2 h-11"
               >
                 <Plus className="h-4 w-4" /> Adicionar Cliente
@@ -287,14 +335,14 @@ export default function Ajustes() {
               {clients.length === 0 && (
                 <p className="text-[10px] text-center text-muted-foreground py-4">Nenhum cliente cadastrado.</p>
               )}
-              {clients.map((c: any) => (
+              {clients.map((c) => (
                 <div key={c.id} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
                   <div>
                     <p className="text-xs font-bold text-foreground">{c.nome}</p>
                     <p className="text-[10px] text-muted-foreground">{c.contato}</p>
                   </div>
                   <button 
-                    onClick={() => handleUpdateSetting('clients', clients.filter((i: any) => i.id !== c.id))}
+                    onClick={() => handleDeleteClient(c.id)}
                     className="p-2 text-muted-foreground/40 hover:text-rose-500 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
