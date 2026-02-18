@@ -107,7 +107,6 @@ export default async function handler(req: any, res: any) {
       console.error('Erro detalhado do Stripe:', stripeError);
       return res.status(400).json({ 
         error: stripeError.message,
-        details: `Visíveis: ${foundIds.slice(0, 3).join(', ')}... | Total: ${foundIds.length}`,
         code: stripeError.code
       });
     }
