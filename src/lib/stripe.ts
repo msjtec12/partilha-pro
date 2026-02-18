@@ -7,21 +7,27 @@ export const redirectToCheckout = async (priceId: string) => {
   const stripe = await stripePromise;
   if (!stripe) throw new Error('Stripe failed to load');
 
-  const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-    body: { priceId }
+  // Obter a sessão atual para enviar o token de autenticação
+  const { data: { session: authSession } } = await supabase.auth.getSession();
+
+  const response = await fetch('/api/create-checkout-session', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authSession?.access_token}`,
+    },
+    body: JSON.stringify({ priceId }),
   });
   
-  if (error) {
-    console.error('Error creating checkout session:', error);
-    // Tenta extrair a mensagem de erro da resposta se possível
-    const errorMessage = error instanceof Error ? error.message : 'Erro ao processar pagamento';
-    throw new Error(errorMessage);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error('Error creating checkout session:', data.error);
+    throw new Error(data.error || 'Erro ao processar pagamento');
   }
   
   if (data?.url) {
     window.location.href = data.url;
-  } else if (data?.error) {
-    throw new Error(data.error);
   } else {
     throw new Error('Link de checkout não recebido');
   }
