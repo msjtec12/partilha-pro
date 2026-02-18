@@ -25,15 +25,15 @@ export default async function handler(req: any, res: any) {
   try {
     const stripeSecret = process.env.STRIPE_SECRET_KEY;
     
-    // Log de diagnóstico (seguro: mostra apenas o prefixo)
-    const keyPrefix = stripeSecret ? stripeSecret.substring(0, 7) : 'NULO';
-    console.log(`Iniciando Stripe com chave: ${keyPrefix}...`);
+    // Log de diagnóstico (seguro: mostra o início para comparar contas)
+    const keyPrefix = stripeSecret ? stripeSecret.substring(0, 15) : 'NULO';
+    console.log(`[DIAGNOSTICO] Stripe Key inicia com: ${keyPrefix}`);
 
     if (!stripeSecret) {
       throw new Error('STRIPE_SECRET_KEY não configurada na Vercel');
     }
 
-    const stripe = new Stripe(stripeSecret, {
+    const stripe = new Stripe(stripeSecret.trim(), {
       apiVersion: '2025-01-27.acacia' as any,
     });
 
@@ -41,6 +41,9 @@ export default async function handler(req: any, res: any) {
     if (!priceId) {
       return res.status(400).json({ error: 'priceId é obrigatório' });
     }
+    
+    const cleanPriceId = priceId.trim();
+    console.log(`[DIAGNOSTICO] Usando Price ID: ${cleanPriceId}`);
 
     // Tenta obter os dados do usuário via header Authorization
     const authHeader = req.headers.authorization;
@@ -74,7 +77,7 @@ export default async function handler(req: any, res: any) {
         payment_method_types: ['card'],
         line_items: [
           {
-            price: priceId,
+            price: cleanPriceId,
             quantity: 1,
           },
         ],
