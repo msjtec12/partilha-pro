@@ -43,7 +43,15 @@ export default async function handler(req: any, res: any) {
     }
     
     const cleanPriceId = priceId.trim();
-    console.log(`[DIAGNOSTICO] Usando Price ID: ${cleanPriceId}`);
+    console.log(`[DIAGNOSTICO] Usando Price ID: [${cleanPriceId}] (Tamanho: ${cleanPriceId.length})`);
+
+    // TESTE: Listar preços ativos para ver o que a API enxerga
+    try {
+      const activePrices = await stripe.prices.list({ limit: 5, active: true });
+      console.log('[DIAGNOSTICO] Preços ativos encontrados na conta:', activePrices.data.map(p => p.id).join(', '));
+    } catch (e) {
+      console.warn('[DIAGNOSTICO] Falha ao listar preços:', e);
+    }
 
     // Tenta obter os dados do usuário via header Authorization
     const authHeader = req.headers.authorization;
@@ -69,7 +77,7 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    console.log(`Criando sessão para: ${priceId}, Usuário: ${userId}`);
+    console.log(`Criando sessão para: ${cleanPriceId}, Usuário: ${userId}`);
 
     // Create checkout session
     try {
@@ -95,7 +103,7 @@ export default async function handler(req: any, res: any) {
       console.error('Erro detalhado do Stripe:', stripeError);
       return res.status(400).json({ 
         error: stripeError.message,
-        details: stripeError.raw?.message || stripeError.type,
+        details: `ID: ${cleanPriceId} | Code: ${stripeError.code} | Type: ${stripeError.type}`,
         code: stripeError.code
       });
     }
