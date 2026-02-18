@@ -37,7 +37,7 @@ export default function Ajustes() {
       try {
         // IDs de preço do Stripe (oficiais do seu dashboard)
         const priceId = billingCycle === 'monthly' 
-          ? 'price_1T2DSv22TLyYgOiQ6pELJMxj' // Novo Mensal
+          ? 'price_1T2DSv22TLyYgOiQ6pELUMXj' // Novo Mensal (Corrigido Case)
           : 'price_1T2DVO22TLyYgOiQ6O84t1mi'; // Novo Anual
         
         await redirectToCheckout(priceId);
