@@ -108,41 +108,35 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Metric Card 1: Faturamento */}
             <div className="glass p-10 rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
-              <div className="absolute top-0 right-0 p-16 -mr-20 -mt-20 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-all duration-700" />
-              <div className="flex justify-between items-start relative z-10">
-                <div className="space-y-6">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Faturamento Bruto</p>
-                  <h2 className="text-5xl font-black tracking-tighter leading-none">{formatCurrency(totalEncomendas)}</h2>
+              <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
+              <div className="flex items-center justify-between mb-8 relative z-10">
+                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                  <TrendingUp className="h-5 w-5" />
                 </div>
-                {chartData.length > 0 && (
-                  <div className="h-20 w-36 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={chartData}>
-                        <Area type="monotone" dataKey="encomendas" stroke="hsl(var(--primary))" strokeWidth={4} fill="transparent" animationDuration={2000} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
+                <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-1 text-[10px] font-black text-emerald-500 uppercase border border-emerald-500/20">
+                  <TrendingUp className="h-3 w-3" /> +12%
+                </div>
+              </div>
+              <div className="relative z-10">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Faturamento</p>
+                <h2 className="text-4xl font-black tracking-tighter text-foreground">{formatCurrency(totalRevenue)}</h2>
               </div>
             </div>
 
             {/* Metric Card 2: Pro-Labore */}
             <div className="glass p-10 rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
-              <div className="absolute top-0 right-0 p-16 -mr-20 -mt-20 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-all duration-700" />
-              <div className="flex justify-between items-start relative z-10">
-                <div className="space-y-6">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Seu Pro-Labore</p>
-                  <h2 className="text-5xl font-black tracking-tighter text-primary leading-none">{formatCurrency(meuLucro)}</h2>
+              <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
+              <div className="flex items-center justify-between mb-8 relative z-10">
+                <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500">
+                  <DollarSign className="h-5 w-5" />
                 </div>
-                {chartData.length > 0 && (
-                  <div className="h-20 w-36 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={chartData}>
-                        <Area type="monotone" dataKey="encomendas" stroke="hsl(var(--primary))" strokeWidth={4} fill="transparent" animationDuration={2500} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
+                <span className="px-2 py-1 rounded-full bg-orange-500/10 text-[9px] font-black text-orange-500 uppercase border border-orange-500/20">
+                  {proLaborePercent}% Divisão
+                </span>
+              </div>
+              <div className="relative z-10">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Pró-Labore</p>
+                <h2 className="text-4xl font-black tracking-tighter text-foreground">{formatCurrency(meuLucro)}</h2>
               </div>
             </div>
           </div>
