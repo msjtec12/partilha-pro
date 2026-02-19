@@ -24,8 +24,9 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background dark">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-2xl shadow-primary/20" />
+      <div className="flex flex-col min-h-screen items-center justify-center bg-background">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-2xl shadow-primary/20 mb-4" />
+        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 animate-pulse">Iniciando Ateliê...</p>
       </div>
     );
   }

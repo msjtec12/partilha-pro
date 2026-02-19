@@ -24,7 +24,16 @@ export function useAuth() {
   };
 
   useEffect(() => {
+    console.log("useAuth: Initing auth listeners...");
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.warn("useAuth: Safety timeout reached, forcing loading false");
+        setLoading(false);
+      }
+    }, 6000);
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log("useAuth: Auth state change event:", _event);
       try {
         setSession(session);
         setUser(session?.user ?? null);
@@ -37,27 +46,40 @@ export function useAuth() {
         console.error("Auth change error:", e);
       } finally {
         setLoading(false);
+        clearTimeout(timeout);
       }
     });
 
     const initSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Session init error object:", error);
+          if (error.message.includes("Refresh Token Not Found") || error.message.includes("invalid refresh token")) {
+            console.warn("Invalid refresh token detected, clearing session...");
+            await supabase.auth.signOut();
+          }
+        }
+        
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
           await fetchProfile(session.user.id);
         }
       } catch (e) {
-        console.error("Session init error:", e);
+        console.error("Session init exception:", e);
       } finally {
         setLoading(false);
+        clearTimeout(timeout);
       }
     };
 
     initSession();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const signUp = async (email: string, password: string, metadata?: { full_name?: string; workshop_name?: string }) => {

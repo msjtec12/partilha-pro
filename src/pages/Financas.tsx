@@ -121,7 +121,7 @@ export default function Financas() {
       periodo,
       lucro_total: lucro,
       minha_parte: lucro * (proLaborePercent / 100),
-      parte_lo_ja: lucro * (reservePercent / 100),
+      parte_loja: lucro * (reservePercent / 100),
     });
 
     if (error) {
