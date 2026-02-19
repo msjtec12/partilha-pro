@@ -7,6 +7,7 @@ import { redirectToCheckout } from '@/lib/stripe';
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { formatCurrency } from '@/lib/formatters';
+import { cn } from '@/lib/utils';
 
 interface Cliente {
   id: string;

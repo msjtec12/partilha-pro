@@ -3,8 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { formatCurrency } from '@/lib/formatters';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, ArrowUpRight, Clock, Landmark, MoreHorizontal, TrendingDown, TrendingUp } from 'lucide-react';
+import { AlertCircle, ArrowUpRight, Clock, Landmark, MoreHorizontal, TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { cn } from '@/lib/utils';
 
 interface ChartData {
   name: string;
@@ -119,7 +120,7 @@ export default function Dashboard() {
               </div>
               <div className="relative z-10">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Faturamento</p>
-                <h2 className="text-4xl font-black tracking-tighter text-foreground">{formatCurrency(totalRevenue)}</h2>
+                <h2 className="text-4xl font-black tracking-tighter text-foreground">{formatCurrency(totalEncomendas)}</h2>
               </div>
             </div>
 
