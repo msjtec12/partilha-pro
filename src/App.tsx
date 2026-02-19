@@ -53,29 +53,31 @@ function AppRoutes() {
       <div className="fixed -top-48 -right-48 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[150px] -z-0" />
       <div className="fixed -bottom-48 -left-48 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[150px] -z-0" />
       
-      {/* Sidebar for Desktop & Mobile Toggle */}
-      <Sidebar 
-        className={cn(
-          "md:flex",
-          isMobile ? (sidebarOpen ? "translate-x-0 fixed inset-0 z-[110] w-full" : "-translate-x-full fixed inset-0 z-[110] w-full") : "relative"
-        )} 
-        onClose={() => setSidebarOpen(false)}
-      />
-
-      {/* Mobile Menu Toggle Button */}
-      {isMobile && !sidebarOpen && (
+      {/* Mobile Menu Toggle Button - Using Tailwind for reliability */}
+      {!sidebarOpen && (
         <button 
           onClick={() => setSidebarOpen(true)}
-          className="fixed top-6 left-6 z-[100] h-12 w-12 glass rounded-2xl flex items-center justify-center text-primary border-white/10 shadow-2xl animate-fade-in"
+          className="fixed top-6 left-6 z-[100] h-12 w-12 glass rounded-2xl flex items-center justify-center text-primary border-white/10 shadow-2xl animate-fade-in md:hidden"
         >
           <Menu className="h-6 w-6" />
         </button>
       )}
 
+      {/* Sidebar for Desktop & Mobile Toggle */}
+      <Sidebar 
+        className={cn(
+          "md:flex",
+          isMobile 
+            ? (sidebarOpen ? "translate-x-0 fixed inset-0 z-[120] w-full flex" : "-translate-x-full fixed inset-0 z-[120] w-full flex opacity-0 invisible") 
+            : "relative"
+        )} 
+        onClose={() => setSidebarOpen(false)}
+      />
+
       {/* Overlay for mobile sidebar */}
       {isMobile && sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] animate-fade-in"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[115] animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}

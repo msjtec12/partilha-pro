@@ -29,7 +29,7 @@ export default function Sidebar({ className, onClose }: SidebarProps) {
 
   return (
     <aside className={cn(
-      "w-80 flex-col bg-background/80 md:bg-background/50 backdrop-blur-3xl border-r border-white/5 p-10 transition-all duration-500 ease-in-out hidden md:flex",
+      "w-80 flex-col bg-black/90 md:bg-background/50 backdrop-blur-3xl border-r border-white/5 p-10 transition-all duration-500 ease-in-out md:flex",
       className
     )}>
       {/* Mobile Close Button */}
