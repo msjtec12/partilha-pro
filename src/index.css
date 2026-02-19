@@ -83,12 +83,17 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Outfit', 'Inter', sans-serif;
     letter-spacing: -0.01em;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+    background-attachment: fixed;
+    opacity: 0.98;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    @apply text-balance;
   }
 }
 
@@ -100,15 +105,15 @@
   .glass {
     background: var(--glass-background);
     border: 1px solid var(--glass-border);
-    @apply backdrop-blur-3xl;
+    @apply backdrop-blur-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.2)];
   }
 
   .premium-gradient {
-    @apply bg-gradient-to-br from-primary to-orange-600;
+    @apply bg-gradient-to-br from-[#E2725B] to-[#B04A33];
   }
 
   .premium-text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-orange-500 to-primary/40;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#E2725B] via-[#E2725B] to-[#E2725B]/40;
   }
 
   .animate-fade-in {
