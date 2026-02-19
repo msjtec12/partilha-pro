@@ -98,7 +98,9 @@
   }
 
   .glass {
-    @apply bg-glass-background backdrop-blur-3xl border border-glass-border;
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    @apply backdrop-blur-3xl;
   }
 
   .premium-gradient {
