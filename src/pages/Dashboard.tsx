@@ -106,11 +106,11 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Left Stats Column */}
         <div className="lg:col-span-2 space-y-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* Metric Card 1: Faturamento */}
-            <div className="glass p-10 rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
+            <div className="glass p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
               <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-              <div className="flex items-center justify-between mb-8 relative z-10">
+              <div className="flex items-center justify-between mb-6 md:mb-8 relative z-10">
                 <div className="p-3 rounded-2xl bg-primary/10 text-primary">
                   <TrendingUp className="h-5 w-5" />
                 </div>
@@ -120,14 +120,14 @@ export default function Dashboard() {
               </div>
               <div className="relative z-10">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Faturamento</p>
-                <h2 className="text-4xl font-black tracking-tighter text-foreground">{formatCurrency(totalEncomendas)}</h2>
+                <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-foreground">{formatCurrency(totalEncomendas)}</h2>
               </div>
             </div>
 
             {/* Metric Card 2: Pro-Labore */}
-            <div className="glass p-10 rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
+            <div className="glass p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
               <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-              <div className="flex items-center justify-between mb-8 relative z-10">
+              <div className="flex items-center justify-between mb-6 md:mb-8 relative z-10">
                 <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500">
                   <DollarSign className="h-5 w-5" />
                 </div>
@@ -137,18 +137,20 @@ export default function Dashboard() {
               </div>
               <div className="relative z-10">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Pró-Labore</p>
-                <h2 className="text-4xl font-black tracking-tighter text-foreground">{formatCurrency(meuLucro)}</h2>
+                <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-foreground">{formatCurrency(meuLucro)}</h2>
               </div>
             </div>
           </div>
 
-          {/* Product Inventory Table */}
-          <div className="glass p-10 rounded-[3.5rem] border-white/5 shadow-2xl bg-white/[0.01]">
-            <div className="flex items-center justify-between mb-12">
-               <h3 className="text-2xl font-black tracking-tighter">Últimas Encomendas</h3>
-               <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 rounded-full px-6">Ver Tudo</Button>
+          {/* Latest Orders List/Table */}
+          <div className="glass p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] border-white/5 shadow-2xl bg-white/[0.01]">
+            <div className="flex items-center justify-between mb-8 md:mb-12">
+               <h3 className="text-xl md:text-2xl font-black tracking-tighter">Últimas Encomendas</h3>
+               <Button variant="ghost" className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 rounded-full px-4 md:px-6">Ver Tudo</Button>
             </div>
-            <div className="overflow-x-auto">
+            
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/30 border-b border-white/5">
@@ -190,6 +192,24 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card List */}
+            <div className="md:hidden space-y-4">
+              {recentOrders.map((order) => (
+                <div key={order.id} className="p-4 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-xl bg-white/[0.03] flex items-center justify-center border border-white/5">
+                      <img src={`https://api.dicebear.com/7.x/shapes/svg?seed=${order.id}`} className="w-8 h-8 opacity-40" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black tracking-tight leading-none mb-1">{order.cliente}</p>
+                      <p className="text-[8px] font-bold text-muted-foreground uppercase opacity-40 italic">{order.status}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm font-black tracking-tighter text-foreground">{formatCurrency(Number(order.valor))}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
