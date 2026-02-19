@@ -17,13 +17,15 @@ const queryClient = new QueryClient();
 
 import Landing from "@/pages/Landing";
 
+import Sidebar from "@/components/Sidebar";
+
 function AppRoutes() {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-background dark">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-2xl shadow-primary/20" />
       </div>
     );
   }
@@ -39,13 +41,16 @@ function AppRoutes() {
   }
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="relative min-h-screen bg-background text-foreground overflow-x-hidden dark flex flex-row">
       {/* Decorative background element */}
-      <div className="fixed -top-24 -right-24 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-      <div className="fixed -bottom-24 -left-24 h-96 w-96 rounded-full bg-success/5 blur-3xl" />
+      <div className="fixed -top-48 -right-48 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[150px] -z-0" />
+      <div className="fixed -bottom-48 -left-48 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[150px] -z-0" />
       
-      <main className="relative z-10 mx-auto w-full max-w-4xl px-4 md:px-6">
-        <div className="mx-auto max-w-lg min-h-screen pb-32">
+      {/* Sidebar for Desktop */}
+      <Sidebar className="hidden lg:flex" />
+
+      <main className="relative z-10 flex-1 min-h-screen">
+        <div className="mx-auto w-full max-w-7xl p-4 md:p-10 pb-32 lg:pb-10">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/encomendas" element={<Encomendas />} />
@@ -57,7 +62,9 @@ function AppRoutes() {
           </Routes>
         </div>
       </main>
-      <BottomNav />
+      
+      {/* BottomNav only for mobile */}
+      <BottomNav className="lg:hidden" />
     </div>
   );
 }

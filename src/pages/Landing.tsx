@@ -4,157 +4,145 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden dark">
       {/* Dynamic Background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-success/5 blur-[120px] rounded-full animate-pulse delay-700" />
+        <div className="absolute top-[-15%] left-[-5%] w-[50%] h-[50%] bg-primary/10 blur-[150px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-15%] right-[-5%] w-[50%] h-[50%] bg-primary/5 blur-[150px] rounded-full animate-pulse delay-700" />
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 glass rounded-xl flex items-center justify-center p-2 shadow-xl border-white/10">
+      <nav className="relative z-50 flex items-center justify-between px-10 py-10 max-w-7xl mx-auto">
+        <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="h-14 w-14 glass rounded-[1.25rem] flex items-center justify-center p-3 shadow-2xl border-white/5 bg-white/[0.03] group-hover:bg-white/[0.08] transition-all">
             <img src="/logo.png" alt="Logo" className="h-full object-contain" />
           </div>
-          <span className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
-            Partilha Pro
+          <span className="text-2xl font-black tracking-tighter uppercase leading-none">
+            PARTILHA <span className="text-primary italic">PRO</span>
           </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-10 text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
+          <a href="#features" className="hover:text-primary transition-all hover:tracking-[0.4em]">O Ateliê</a>
+          <a href="#about" className="hover:text-primary transition-all hover:tracking-[0.4em]">Soluções</a>
+          <a href="#contact" className="hover:text-primary transition-all hover:tracking-[0.4em]">Mentoria</a>
+        </div>
+        <div className="flex items-center gap-8">
           <Link to="/auth?mode=login">
-            <Button variant="ghost" className="font-bold text-sm hidden md:flex">Entrar</Button>
+            <Button variant="ghost" className="font-black text-[11px] hidden md:flex uppercase tracking-[0.3em] hover:text-primary">Entrar</Button>
           </Link>
           <Link to="/auth?mode=signup">
-            <Button className="premium-gradient rounded-xl font-bold px-6 shadow-lg shadow-primary/20 transition-transform hover:scale-105 active:scale-95">
-              Começar Agora
+            <Button className="premium-gradient rounded-full font-black px-10 h-14 shadow-2xl shadow-primary/40 transition-all hover:scale-105 active:scale-95 uppercase tracking-tighter text-xs">
+              Mudar de Nível
             </Button>
           </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 pt-20 pb-32 px-6 max-w-7xl mx-auto text-center">
-        <div className="animate-fade-in space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-white/10 text-xs font-bold uppercase tracking-widest text-primary mb-4 shadow-sm">
-            <Star className="h-3 w-3 fill-primary" /> O Futuro da sua Oficina
-          </div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter max-w-4xl mx-auto leading-[1.1]">
-            Sua oficina <span className="text-primary italic">organizada</span>, seu negócio <span className="premium-text-gradient">profissional</span>.
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-            A ferramenta definitiva para artesãos e donos de oficinas que buscam profissionalismo, clareza financeira e crescimento real.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Link to="/auth?mode=signup">
-              <Button size="lg" className="h-14 px-8 rounded-2xl text-lg font-bold premium-gradient shadow-2xl shadow-primary/30 gap-2 transition-all hover:gap-4">
-                Criar minha conta grátis <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground">
-              <CheckCircle2 className="h-4 w-4 text-success" /> Sem cartão de crédito
+      <section className="relative z-10 pt-32 pb-60 px-10 max-w-7xl mx-auto text-center lg:text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+          <div className="animate-fade-in space-y-12">
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full glass border-white/5 text-[10px] font-black uppercase tracking-[0.4em] text-primary/70 mb-2">
+              <Star className="h-3 w-3 fill-primary/50" /> O Futuro da sua Arte
+            </div>
+            <h1 className="text-6xl md:text-[5.5rem] font-black tracking-tighter leading-[0.85] text-balance">
+              Sua oficina <br />
+              <span className="text-primary italic">organizada</span>, <br />
+              sua arte <br />
+              <span className="premium-text-gradient">lucrativa</span>.
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-xl font-medium leading-relaxed opacity-80">
+              Gestão de alta precisão para artesãos que elevam seu trabalho ao nível profissional. Controle total, do esboço à entrega.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-8 pt-8">
+              <Link to="/auth?mode=signup" className="w-full sm:w-auto">
+                <Button size="lg" className="h-20 px-16 rounded-full text-xl font-black premium-gradient shadow-2xl shadow-primary/30 gap-4 transition-all hover:px-20 uppercase tracking-tighter">
+                  COMEÇAR AGORA <ArrowRight className="h-6 w-6" />
+                </Button>
+              </Link>
+              <div className="flex flex-col items-start gap-1">
+                <div className="flex items-center gap-2 text-muted-foreground/60 font-black uppercase tracking-widest text-[9px]">
+                   <CheckCircle2 className="h-4 w-4 text-primary" /> 7 dias de acesso total
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground/60 font-black uppercase tracking-widest text-[9px]">
+                   <CheckCircle2 className="h-4 w-4 text-primary" /> Sem compromisso
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Hero Image / Mockup */}
-          <div className="mt-20 relative max-w-5xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75 -z-10" />
-            <div className="glass rounded-[2.5rem] p-4 border-white/10 shadow-3xl overflow-hidden group">
-              <img 
-                src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=2070" 
-                alt="Artesanato Manual Profissional" 
-                className="rounded-[2rem] w-full object-cover shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] aspect-video md:aspect-[21/9]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
+          {/* Artistic Image Mockup */}
+          <div className="relative animate-slide-up" style={{ animationDelay: '0.3s' }}>
+            <div className="absolute -inset-16 bg-primary/20 blur-[150px] rounded-full opacity-40 -z-10 animate-pulse" />
+            <div className="glass rounded-[4rem] p-6 border-white/5 shadow-[0_0_120px_rgba(0,0,0,0.6)] relative overflow-hidden group">
+              <div className="aspect-[4/5] md:aspect-square overflow-hidden rounded-[3.25rem] relative">
+                <img 
+                  src="/mockup.png" 
+                  alt="Partilha Pro Mockup" 
+                  className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
+                
+                {/* Floating UI Elements matching mockup */}
+                <div className="absolute bottom-10 left-10 right-10 glass p-8 rounded-[2rem] border-white/10 shadow-3xl animate-bounce-slow bg-white/[0.03]">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="h-12 w-12 rounded-[1rem] bg-primary/20 flex items-center justify-center text-primary border border-primary/10">
+                      <Zap className="h-6 w-6 fill-primary" />
+                    </div>
+                    <span className="text-[10px] uppercase font-black tracking-[0.4em] text-muted-foreground/80">Performance Artisanal</span>
+                  </div>
+                  <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full w-[72%] premium-gradient rounded-full shadow-[0_0_20px_rgba(255,100,0,0.4)]" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Grid */}
-      <section className="relative z-10 py-24 px-6 bg-white/[0.02] border-y border-white/5">
+      <section id="features" className="relative z-10 py-48 px-10 bg-white/[0.01]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight">Tudo o que você precisa</h2>
-            <p className="text-muted-foreground font-medium">Funcionalidades pensadas para quem põe a mão na massa.</p>
+          <div className="text-center mb-24 space-y-6">
+            <h2 className="text-4xl md:text-6xl font-black tracking-tighter">O Essencial para o seu Ateliê</h2>
+            <p className="text-muted-foreground text-xl font-medium max-w-2xl mx-auto leading-relaxed">Desenvolvido por quem entende de mão na massa e de números.</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             <FeatureCard 
-              icon={<Package className="h-6 w-6" />}
-              title="Gestão de Encomendas"
-              description="Acompanhe cada pedido do início ao fim com status visíveis e alertas de atraso."
+              icon={<Package className="h-10 w-10" />}
+              title="Encomendas Sob Medida"
+              description="Controle cada etapa da obra, do orçamento à entrega final com status visuais intuitivos."
             />
             <FeatureCard 
-              icon={<TrendingUp className="h-6 w-6" />}
-              title="Fluxo de Caixa"
-              description="Visualize suas finanças, despesas e organização com relatórios inteligentes e práticos."
+              icon={<TrendingUp className="h-10 w-10" />}
+              title="Clareza Financeira"
+              description="Saiba exatamente onde cada centavo está sendo investido e qual o lucro real da sua arte."
             />
             <FeatureCard 
-              icon={<Zap className="h-6 w-6" />}
-              title="Catálogo de Produtos"
-              description="Gerencie seu inventário e precifique suas criações de forma profissional e rápida."
+              icon={<Shield className="h-10 w-10" />}
+              title="Escalabilidade"
+              description="Ferramentas prontas para transformar seu pequeno ateliê em uma operação de alto nível."
             />
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Preview */}
-      <section className="relative z-10 py-32 px-6 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center gap-16">
-          <div className="flex-1 space-y-8 text-left">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">
-              Preço justo para <br /><span className="text-primary">todo tamanho de negócio.</span>
-            </h2>
-            <p className="text-lg text-muted-foreground font-medium">
-              Comece de graça e evolua conforme sua produção aumenta. Nosso foco é o seu sucesso.
-            </p>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3 font-bold text-foreground">
-                <Shield className="h-5 w-5 text-primary" /> Pagamento Seguro via Stripe
-              </li>
-              <li className="flex items-center gap-3 font-bold text-foreground">
-                <Users className="h-5 w-5 text-primary" /> Gestão de Equipe no Pro
-              </li>
-            </ul>
-          </div>
-          
-          <div className="w-full md:w-96 glass p-8 rounded-[2.5rem] border-white/10 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-12 -mr-12 -mt-12 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all" />
-            <div className="relative z-10">
-              <span className="px-3 py-1 rounded-full bg-primary/10 text-[10px] font-black uppercase tracking-widest text-primary border border-primary/20">Plano Business</span>
-              <div className="mt-6 flex items-baseline gap-2">
-                <span className="text-5xl font-black">R$ 49,90</span>
-                <span className="text-muted-foreground font-bold">/mês</span>
-              </div>
-              <p className="mt-4 text-sm text-muted-foreground font-medium">Acesso total a todas as funcionalidades premium.</p>
-              
-              <ul className="mt-8 space-y-4">
-                {['Encomendas Ilimitadas', 'Gestão de Colaboradores', 'Relatórios em PDF', 'Suporte Prioritário'].map(item => (
-                  <li key={item} className="flex items-center gap-3 text-sm font-semibold">
-                    <CheckCircle2 className="h-4 w-4 text-primary" /> {item}
-                  </li>
-                ))}
-              </ul>
-              
-              <Link to="/auth?mode=signup">
-                <Button className="w-full mt-10 h-14 rounded-2xl text-lg font-bold premium-gradient shadow-xl transition-transform hover:scale-105">
-                  Começar Agora
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-12 px-6 border-t border-white/5 text-center text-muted-foreground">
-        <p className="text-sm font-bold tracking-widest uppercase">Partilha Pro © 2024</p>
-        <p className="mt-2 text-[10px] uppercase tracking-tighter opacity-50">Sua oficina, seu império.</p>
+      <footer className="relative z-10 py-32 px-10 border-t border-white/5 text-center">
+        <div className="flex justify-center mb-10">
+          <div className="h-16 w-16 glass rounded-2xl flex items-center justify-center p-4 border-white/5">
+            <img src="/logo.png" alt="Logo" className="h-full object-contain grayscale opacity-50" />
+          </div>
+        </div>
+        <p className="text-[11px] font-black tracking-[0.6em] uppercase text-muted-foreground/30 mb-2">PARTILHA PRO © 2024</p>
+        <p className="text-[10px] uppercase tracking-widest text-primary/30 font-bold italic">A excelência em cada detalhe, como sua arte.</p>
       </footer>
     </div>
   );
 }
+
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (

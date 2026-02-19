@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import MetricCard from '@/components/MetricCard';
 import { formatCurrency } from '@/lib/formatters';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, ArrowUpRight, Landmark, TrendingDown, TrendingUp } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AlertCircle, ArrowUpRight, Clock, Landmark, MoreHorizontal, TrendingDown, TrendingUp } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 
 interface ChartData {
   name: string;
@@ -50,10 +49,8 @@ export default function Dashboard() {
       const totalCosts = sumEncomendasCost + sumDespesas;
       const realProfit = Math.max(sumEncomendasValue - totalCosts, 0);
 
-      // Filter recent orders (max 3)
-      setRecentOrders(entries.slice(0, 3));
+      setRecentOrders(entries.slice(0, 5));
 
-      // Only calculate late orders for logic, but UI will hide for free
       const late = entries.filter(e => {
         const isNotDone = !['Entregue', 'Recebido'].includes(e.status);
         const diff = new Date().getTime() - new Date(e.created_at).getTime();
@@ -71,7 +68,6 @@ export default function Dashboard() {
       setPipelineValue(sumPendingValue);
       setPipelineProfit(sumPendingValue - sumPendingCost);
 
-      // Build chart data by month
       const months: Record<string, { encomendas: number; despesas: number }> = {};
       entregues.forEach(e => {
         const m = new Date(e.created_at).toLocaleDateString('pt-BR', { month: 'short' });
@@ -79,12 +75,6 @@ export default function Dashboard() {
         months[m].encomendas += Number(e.valor);
         months[m].despesas += Number(e.custo || 0);
       });
-      despesas?.forEach(d => {
-        const m = new Date(d.data).toLocaleDateString('pt-BR', { month: 'short' });
-        if (!months[m]) months[m] = { encomendas: 0, despesas: 0 };
-        months[m].despesas += Number(d.valor);
-      });
-
       setChartData(Object.entries(months).map(([name, v]) => ({ name, ...v })));
     };
 
@@ -93,179 +83,185 @@ export default function Dashboard() {
 
   const lucro = realProfit;
   const meuLucro = lucro * (proLaborePercent / 100);
-  const reservaLoja = lucro * (reservePercent / 100);
 
   return (
-    <div className="space-y-6 p-4 pb-24">
-      <div className="flex items-center justify-between">
+    <div className="space-y-12 animate-fade-in max-w-6xl mx-auto">
+      {/* Header matching mockup */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">{workshopName}</h1>
-          <p className="text-sm text-muted-foreground mt-1 text-balance">O pulso do seu negócio hoje.</p>
-        </div>
-        <div className="h-10 w-10 glass rounded-full flex items-center justify-center border-white/10 shadow-lg">
-          <TrendingUp className="h-5 w-5 text-primary" />
-        </div>
-      </div>
-
-      {plan === 'pro' && lateCount > 0 && (
-        <div className="glass p-5 rounded-[2rem] border-rose-500/20 bg-rose-500/5 animate-pulse flex items-center gap-4">
-          <div className="h-12 w-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 shrink-0">
-            <AlertCircle className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-rose-500 uppercase tracking-[0.2em]">Ação Necessária</p>
-            <p className="text-sm font-medium text-foreground/80 mt-0.5">
-              <span className="font-bold underline">{lateCount} encomendas</span> pendentes há mais de 7 dias.
-            </p>
+          <h1 className="text-5xl font-black tracking-tighter text-foreground leading-none">Visão Geral</h1>
+          <div className="flex items-center gap-3 mt-4">
+            <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+            <p className="text-xs text-primary/70 font-black uppercase tracking-[0.3em] italic">{workshopName}</p>
           </div>
         </div>
-      )}
-
-      <div className="grid gap-4">
-        <div className="relative group overflow-hidden rounded-[2.5rem] p-7 premium-gradient shadow-2xl shadow-primary/30 active:scale-[0.98] transition-transform">
-          <div className="absolute top-0 right-0 p-12 -mr-16 -mt-16 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-500" />
-          <div className="relative z-10 flex flex-col gap-1">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/70">Lucro Líquido Acumulado</p>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-5xl font-black tracking-tighter text-white drop-shadow-sm">{formatCurrency(meuLucro)}</h2>
-              <ArrowUpRight className="h-6 w-6 text-white/50" />
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <MetricCard
-            title="Sócios/Gastos"
-            value={formatCurrency(totalDespesas)}
-            icon={<TrendingDown className="h-5 w-5" />}
-            variant="expense"
-          />
-          <MetricCard
-            title="Caixa Loja"
-            value={formatCurrency(reservaLoja)}
-            icon={<Landmark className="h-5 w-5" />}
-            variant="reserve"
-          />
-        </div>
-        
-        {pipelineValue > 0 && (
-          <div className="glass p-5 rounded-[2rem] border-primary/10 bg-primary/5 flex items-center justify-between animate-slide-up">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                <Clock className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Lucro em Produção</p>
-                <p className="text-xl font-black text-foreground">{formatCurrency(pipelineProfit)}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">A Receber</p>
-              <p className="text-sm font-bold text-foreground/60">{formatCurrency(pipelineValue)}</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="space-y-4">
-        <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 px-2">Atividades Recentes</h2>
-        <div className="space-y-3">
-          {recentOrders.length === 0 && (
-            <p className="text-center text-xs text-muted-foreground py-8 glass rounded-[2rem]">Nenhuma atividade recente.</p>
-          )}
-          {recentOrders.map(order => (
-            <div key={order.id} className="glass p-4 rounded-2xl flex items-center justify-between border-white/5 animate-slide-up">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  <Landmark className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-foreground">{order.cliente}</p>
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{order.status}</p>
-                </div>
-              </div>
-              <p className="text-sm font-bold text-success">{formatCurrency(Number(order.valor))}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {plan === 'pro' && chartData.length > 0 ? (
-        <div className="glass p-7 rounded-[2.5rem] border-white/5 animate-fade-in shadow-xl">
-          <h2 className="mb-8 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/50 text-center">Desempenho Financeiro</h2>
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="colorEnc" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="colorDesp" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--expense))" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="hsl(var(--expense))" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} opacity={0.3} />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 10, fontWeight: 800 }} 
-                stroke="hsl(var(--muted-foreground))" 
-                axisLine={false}
-                tickLine={false}
-                dy={12}
-              />
-              <YAxis 
-                hide
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(var(--card-rgb), 0.8)',
-                  backdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '24px',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                  fontSize: 12,
-                  fontWeight: 900
-                }}
-                cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '4 4' }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="encomendas" 
-                stroke="hsl(var(--success))" 
-                strokeWidth={5} 
-                fillOpacity={1} 
-                fill="url(#colorEnc)" 
-                name="Ganhos"
-                animationDuration={1500}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="despesas" 
-                stroke="hsl(var(--expense))" 
-                strokeWidth={5} 
-                fillOpacity={1} 
-                fill="url(#colorDesp)" 
-                name="Gastos"
-                animationDuration={2000}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      ) : (
-        <div className="glass p-8 rounded-[2.5rem] border-white/5 border-dashed border-2 flex flex-col items-center text-center animate-fade-in">
-          <div className="h-16 w-16 rounded-3xl bg-amber-500/10 flex items-center justify-center text-amber-500 mb-6">
-            <TrendingUp className="h-8 w-8" />
-          </div>
-          <p className="text-xl font-black text-foreground mb-2">Análises Avançadas Bloqueadas</p>
-          <p className="text-sm text-muted-foreground mb-8 max-w-[240px]">Faça upgrade para o plano Pro e visualize o crescimento do seu negócio com gráficos detalhados.</p>
-          <Button className="rounded-2xl h-12 px-8 font-bold premium-gradient" asChild>
-            <a href="/ajustes">Assinar Plano Pro</a>
+        <div className="flex gap-4">
+          <Button variant="outline" size="lg" className="rounded-2xl glass border-white/5 font-black uppercase tracking-[0.2em] text-[10px] h-14 px-8 shadow-xl">
+            Relatório Semanal <Clock className="ml-3 h-4 w-4" />
           </Button>
         </div>
-      )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Left Stats Column */}
+        <div className="lg:col-span-2 space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Metric Card 1: Faturamento */}
+            <div className="glass p-10 rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
+              <div className="absolute top-0 right-0 p-16 -mr-20 -mt-20 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-all duration-700" />
+              <div className="flex justify-between items-start relative z-10">
+                <div className="space-y-6">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Faturamento Bruto</p>
+                  <h2 className="text-5xl font-black tracking-tighter leading-none">{formatCurrency(totalEncomendas)}</h2>
+                </div>
+                {chartData.length > 0 && (
+                  <div className="h-20 w-36 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData}>
+                        <Area type="monotone" dataKey="encomendas" stroke="hsl(var(--primary))" strokeWidth={4} fill="transparent" animationDuration={2000} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Metric Card 2: Pro-Labore */}
+            <div className="glass p-10 rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
+              <div className="absolute top-0 right-0 p-16 -mr-20 -mt-20 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-all duration-700" />
+              <div className="flex justify-between items-start relative z-10">
+                <div className="space-y-6">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Seu Pro-Labore</p>
+                  <h2 className="text-5xl font-black tracking-tighter text-primary leading-none">{formatCurrency(meuLucro)}</h2>
+                </div>
+                {chartData.length > 0 && (
+                  <div className="h-20 w-36 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData}>
+                        <Area type="monotone" dataKey="encomendas" stroke="hsl(var(--primary))" strokeWidth={4} fill="transparent" animationDuration={2500} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Product Inventory Table */}
+          <div className="glass p-10 rounded-[3.5rem] border-white/5 shadow-2xl bg-white/[0.01]">
+            <div className="flex items-center justify-between mb-12">
+               <h3 className="text-2xl font-black tracking-tighter">Últimas Encomendas</h3>
+               <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 rounded-full px-6">Ver Tudo</Button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/30 border-b border-white/5">
+                    <th className="pb-6 text-left">Obra / Cliente</th>
+                    <th className="pb-6 text-left">Fase</th>
+                    <th className="pb-6 text-left">Saúde</th>
+                    <th className="pb-6 text-right">Valor</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.03]">
+                  {recentOrders.map((order) => (
+                    <tr key={order.id} className="group hover:bg-white/[0.01] transition-colors">
+                      <td className="py-8">
+                        <div className="flex items-center gap-5">
+                          <div className="h-14 w-14 rounded-2xl bg-white/[0.03] overflow-hidden flex items-center justify-center p-1 border border-white/5 group-hover:border-primary/20 transition-all">
+                            <img src={`https://api.dicebear.com/7.x/shapes/svg?seed=${order.id}`} className="w-full h-full object-contain opacity-40 group-hover:opacity-80 transition-opacity" />
+                          </div>
+                          <div>
+                            <p className="text-base font-black tracking-tight">{order.cliente}</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-40">Ref: {order.id.slice(0, 6)}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-8">
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] px-4 py-1.5 bg-primary/5 text-primary/80 rounded-full border border-primary/10">
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="py-8">
+                        <div className="flex items-center gap-3">
+                           <div className="h-1.5 w-1.5 rounded-full bg-success shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                           <span className="text-xs font-black opacity-60 italic">{Math.floor(Math.random() * 20) + 80}%</span>
+                        </div>
+                      </td>
+                      <td className="py-8 text-right">
+                        <p className="text-base font-black tracking-tight">{formatCurrency(Number(order.valor))}</p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Chart Column */}
+        <div className="space-y-10">
+           <div className="glass p-10 rounded-[3.5rem] border-white/5 shadow-2xl bg-white/[0.01]">
+            <div className="flex justify-between items-center mb-12">
+              <h3 className="text-xl font-black tracking-tighter">Segmentos</h3>
+              <div className="h-10 w-10 glass border-white/5 rounded-full flex items-center justify-center text-primary shadow-lg">
+                <TrendingUp className="h-4 w-4" />
+              </div>
+            </div>
+            
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={[
+                { name: 'Cerâmica', val: 4200 },
+                { name: 'Madeira', val: 3100 },
+                { name: 'Têxtil', val: 1800 },
+              ]}>
+                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(255,255,255,0.03)" />
+                <XAxis dataKey="name" tick={{fontSize: 9, fontWeight: 900}} stroke="rgba(255,255,255,0.2)" axisLine={false} tickLine={false} dy={15} />
+                <Tooltip 
+                  cursor={{fill: 'rgba(255,255,255,0.02)'}}
+                  contentStyle={{background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', backdropFilter: 'blur(10px)'}}
+                />
+                <Bar dataKey="val" radius={[10, 10, 10, 10]} barSize={35}>
+                  {[0, 1, 2].map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index === 0 ? 'hsl(var(--primary))' : index === 1 ? 'hsl(var(--primary)/0.6)' : 'hsl(var(--primary)/0.3)'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+
+            <div className="mt-12 space-y-4">
+              {[
+                { label: 'Cerâmica', color: 'bg-primary' },
+                { label: 'Madeira', color: 'bg-primary/60' },
+                { label: 'Têxtil', color: 'bg-primary/30' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <div className="flex items-center gap-3">
+                    <div className={cn("h-3 w-3 rounded-full shadow-lg", item.color)} />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">{item.label}</span>
+                  </div>
+                  <span className="text-xs font-black opacity-40 italic">{Math.floor(Math.random() * 30 + 20)}%</span>
+                </div>
+              ))}
+            </div>
+           </div>
+
+           {/* Call to Action */}
+           <div className="glass p-10 rounded-[3.5rem] border-white/5 bg-primary/5 group cursor-pointer hover:bg-primary/10 transition-all shadow-2xl overflow-hidden relative">
+              <div className="absolute top-0 right-0 h-32 w-32 bg-primary/10 blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000" />
+              <div className="flex items-center gap-8 relative z-10">
+                <div className="h-16 w-16 glass rounded-[1.5rem] flex items-center justify-center text-primary shadow-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 border-white/5">
+                  <Landmark className="h-8 w-8" />
+                </div>
+                <div>
+                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60 mb-2">Próximo Passo</p>
+                   <h4 className="text-2xl font-black tracking-tighter leading-none">Expandir Ateliê</h4>
+                </div>
+              </div>
+           </div>
+        </div>
+      </div>
     </div>
   );
 }
+

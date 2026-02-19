@@ -42,19 +42,19 @@ export default function Auth() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-background px-4 overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center bg-background px-4 overflow-hidden dark">
       {/* Decorative background elements */}
-      <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
-      <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-success/10 blur-3xl animate-pulse" />
+      <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/20 blur-[120px] animate-pulse" />
+      <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-primary/10 blur-[120px] animate-pulse delay-700" />
       
-      <div className="w-full max-w-sm glass p-8 rounded-[2rem] shadow-2xl animate-slide-up relative z-10">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-auto items-center justify-center">
-            <img src="/logo.png" alt="Partilha Pro Logo" className="h-20 object-contain drop-shadow-xl" />
+      <div className="w-full max-w-sm glass p-10 rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] animate-slide-up relative z-10 border-white/5">
+        <div className="mb-10 text-center">
+          <div className="mx-auto mb-6 flex h-20 w-auto items-center justify-center">
+            <img src="/logo.png" alt="Partilha Pro Logo" className="h-20 object-contain drop-shadow-2xl" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Partilha Pro</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {isLogin ? 'Sua oficina organizada, lucro no bolso.' : 'Comece sua jornada profissional hoje.'}
+          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">Partilha Pro</h1>
+          <p className="mt-2 text-xs font-bold uppercase tracking-widest text-primary/60 italic">
+            {isLogin ? 'Sua oficina, seu império.' : 'A jornada oficial começa aqui.'}
           </p>
         </div>
 
@@ -68,7 +68,7 @@ export default function Auth() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
-                  className="h-12 rounded-xl bg-background/50 border-white/10"
+                  className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
                 />
               </div>
               <div className="space-y-2">
@@ -78,7 +78,7 @@ export default function Auth() {
                   value={workshopName}
                   onChange={(e) => setWorkshopName(e.target.value)}
                   required
-                  className="h-12 rounded-xl bg-background/50 border-white/10"
+                  className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
                 />
               </div>
             </>
@@ -90,7 +90,7 @@ export default function Auth() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-12 rounded-xl bg-background/50 border-white/10"
+              className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
             />
           </div>
           <div className="space-y-2">
@@ -101,19 +101,19 @@ export default function Auth() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="h-12 rounded-xl bg-background/50 border-white/10"
+              className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
             />
           </div>
-          <Button type="submit" className="h-12 w-full text-base font-semibold rounded-xl premium-gradient shadow-lg shadow-primary/20" disabled={loading}>
-            {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Crie sua conta'}
+          <Button type="submit" className="h-14 w-full text-sm font-black uppercase tracking-tighter rounded-full premium-gradient shadow-2xl shadow-primary/30 mt-6 transition-all hover:scale-105 active:scale-95" disabled={loading}>
+            {loading ? 'Carregando...' : isLogin ? 'ENTRAR AGORA' : 'CRIAR MINHA CONTA'}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-8 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
           {isLogin ? 'Novo por aqui?' : 'Já possui conta?'}{' '}
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="font-bold text-primary hover:text-success transition-colors"
+            className="text-primary hover:text-foreground transition-colors underline underline-offset-4"
           >
             {isLogin ? 'Cadastre-se' : 'Acesse agora'}
           </button>
@@ -122,3 +122,4 @@ export default function Auth() {
     </div>
   );
 }
+

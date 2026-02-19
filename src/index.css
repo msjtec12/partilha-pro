@@ -2,94 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap');
 
 @layer base {
   :root {
-    --background: 30 20% 97%;
-    --foreground: 25 30% 15%;
+    --background: 25 20% 98%;
+    --foreground: 25 35% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 25 30% 15%;
+    --card-foreground: 25 35% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 25 30% 15%;
+    --popover-foreground: 25 35% 10%;
 
-    --primary: 25 50% 45%;
+    --primary: 22 70% 45%; /* Deep Artisan Terracotta */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 20% 92%;
-    --secondary-foreground: 25 30% 25%;
+    --secondary: 35 25% 94%;
+    --secondary-foreground: 25 40% 15%;
 
-    --muted: 30 15% 90%;
-    --muted-foreground: 25 10% 45%;
+    --muted: 35 15% 94%;
+    --muted-foreground: 25 10% 40%;
 
-    --accent: 30 20% 92%;
-    --accent-foreground: 25 30% 15%;
+    --accent: 22 60% 96%;
+    --accent-foreground: 22 70% 45%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
 
-    --success: 120 25% 40%;
+    --success: 142 45% 40%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --border: 25 15% 90%;
+    --input: 25 15% 90%;
+    --ring: 22 70% 45%;
 
-    --expense: 15 60% 50%;
-    --expense-foreground: 0 0% 100%;
+    --radius: 1.75rem;
 
-    --reserve: 35 40% 45%;
-    --reserve-foreground: 0 0% 100%;
-
-    --status-pendente: 45 93% 47%;
-    --status-fazer: 25 95% 53%;
-    --status-entregar: 35 40% 45%;
-    --status-entregue: 120 25% 40%;
-    --status-recebido: 20 40% 50%;
-
-    --border: 30 20% 85%;
-    --input: 30 20% 85%;
-    --ring: 25 50% 45%;
-
-    --radius: 1.25rem;
-
-    --glass-background: rgba(255, 250, 240, 0.7);
-    --glass-border: rgba(210, 180, 140, 0.2);
-    
-    --sidebar-background: 30 20% 95%;
-    --sidebar-foreground: 25 30% 20%;
-    --sidebar-primary: 25 50% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 20% 90%;
-    --sidebar-accent-foreground: 25 50% 45%;
-    --sidebar-border: 30 20% 88%;
-    --sidebar-ring: 25 50% 45%;
+    --glass-background: rgba(255, 255, 255, 0.5);
+    --glass-border: rgba(210, 105, 30, 0.08);
   }
 
   .dark {
-    --background: 25 20% 6%;
-    --foreground: 30 20% 95%;
-    --card: 25 20% 9%;
-    --card-foreground: 30 20% 95%;
-    --popover: 25 20% 9%;
-    --popover-foreground: 30 20% 95%;
-    --primary: 25 50% 50%;
+    --background: 22 20% 4%; /* Darker, slightly tinted background */
+    --foreground: 30 25% 96%;
+    
+    --card: 22 20% 7%;
+    --card-foreground: 30 25% 96%;
+    
+    --popover: 22 20% 6%;
+    --popover-foreground: 30 25% 96%;
+    
+    --primary: 22 75% 55%; /* More vibrant in dark mode */
     --primary-foreground: 0 0% 100%;
-    --secondary: 25 15% 15%;
+    
+    --secondary: 22 15% 10%;
     --secondary-foreground: 30 20% 90%;
-    --muted: 25 15% 15%;
-    --muted-foreground: 30 10% 65%;
-    --accent: 25 15% 15%;
-    --accent-foreground: 30 20% 95%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 25 15% 18%;
-    --input: 25 15% 18%;
-    --ring: 25 50% 50%;
+    
+    --muted: 22 10% 10%;
+    --muted-foreground: 30 10% 55%;
+    
+    --accent: 22 65% 15%;
+    --accent-foreground: 22 75% 55%;
+    
+    --border: 22 15% 10%;
+    --input: 22 15% 10%;
+    --ring: 22 75% 55%;
 
-    --glass-background: rgba(20, 15, 10, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.03);
+    --glass-background: rgba(18, 14, 12, 0.8);
+    --glass-border: rgba(226, 114, 91, 0.05);
   }
 }
 
@@ -99,8 +80,15 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
   }
 }
 
@@ -110,17 +98,15 @@
   }
 
   .glass {
-    @apply backdrop-blur-md bg-white/70 border border-white/20;
-    background: var(--glass-background);
-    border-color: var(--glass-border);
+    @apply bg-glass-background backdrop-blur-3xl border border-glass-border;
   }
 
   .premium-gradient {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--success)) 100%);
+    @apply bg-gradient-to-br from-primary to-orange-600;
   }
 
   .premium-text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-success;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-orange-500 to-primary/40;
   }
 
   .animate-fade-in {
@@ -132,21 +118,40 @@
   }
 
   .animate-bounce-slow {
-    animation: bounceSlow 3s ease-in-out infinite;
+    animation: bounce-slow 4s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  @keyframes bounceSlow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(10px, -15px) rotate(2deg); }
+  66% { transform: translate(-10px, 5px) rotate(-1deg); }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.5; filter: blur(100px); }
+  50% { opacity: 0.8; filter: blur(130px); }
+}
 }
