@@ -120,14 +120,14 @@ export default function Ajustes() {
 
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-4xl mx-auto">
+    <div className="space-y-8 md:space-y-12 animate-fade-in max-w-4xl mx-auto px-2 md:px-0 pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-5xl font-black tracking-tighter text-foreground leading-none">Ajustes</h1>
-          <p className="text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Configurações & Gestão</p>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-none">Ajustes</h1>
+          <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Configurações & Gestão</p>
         </div>
         {plan === 'pro' && (
-          <span className="flex items-center gap-2 px-5 py-2 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest border border-amber-500/20 shadow-2xl animate-bounce-slow">
+          <span className="flex items-center gap-2 px-5 py-2 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest border border-amber-500/20 shadow-2xl animate-bounce-slow self-start md:self-auto">
             <Crown className="h-4 w-4 fill-amber-500/20" /> PLANO BUSINESS
           </span>
         )}

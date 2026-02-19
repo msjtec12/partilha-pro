@@ -146,12 +146,12 @@ export default function Financas() {
   };
 
   return (
-    <div className="space-y-16 animate-fade-in max-w-5xl mx-auto">
+    <div className="space-y-12 md:space-y-16 animate-fade-in max-w-5xl mx-auto px-2 md:px-0 pb-24 md:pb-0">
       <div className="space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-5xl font-black tracking-tighter text-foreground leading-none">Despesas</h1>
-            <p className="text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Controle de Insumos & Operação</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-none">Despesas</h1>
+            <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Controle de Insumos & Operação</p>
           </div>
           <div className="flex items-center gap-4">
             {plan === 'pro' && (

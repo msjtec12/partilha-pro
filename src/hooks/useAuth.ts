@@ -104,7 +104,16 @@ export function useAuth() {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      window.location.href = '/';
+    } catch (e) {
+      console.error("Logout error:", e);
+      window.location.href = '/';
+    }
   };
 
   return { 
