@@ -120,15 +120,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    console.log("AuthProvider: Starting signOut process...");
     try {
-      await supabase.auth.signOut();
+      // Clear Supabase session first
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("AuthProvider: Supabase signOut error:", error);
+      }
+    } catch (e) {
+      console.error("AuthProvider: Supabase signOut exception:", e);
+    } finally {
+      // Always clear local state and redirect
+      console.log("AuthProvider: Clearing local state and redirecting...");
       setSession(null);
       setUser(null);
       setProfile(null);
-      window.location.href = '/';
-    } catch (e) {
-      console.error("SignOut error:", e);
-      window.location.href = '/';
+      window.location.replace('/');
     }
   };
 

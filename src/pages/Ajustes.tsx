@@ -347,7 +347,15 @@ export default function Ajustes() {
         </div>
       </div>
 
-      <Button variant="ghost" className="w-full gap-2 text-rose-500 hover:text-rose-600 hover:bg-rose-500/5 rounded-2xl h-12" onClick={signOut}>
+      <Button 
+        variant="ghost" 
+        className="w-full gap-2 text-rose-500 hover:text-rose-600 hover:bg-rose-500/5 rounded-2xl h-12" 
+        onClick={() => {
+          if (window.confirm("Deseja realmente sair da conta?")) {
+            signOut();
+          }
+        }}
+      >
         <LogOut className="h-4 w-4" /> Sair da Conta
       </Button>
     </div>

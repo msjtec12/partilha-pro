@@ -18,9 +18,13 @@ const queryClient = new QueryClient();
 import Landing from "@/pages/Landing";
 
 import Sidebar from "@/components/Sidebar";
+import { Menu, X } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 function AppRoutes() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -47,8 +51,32 @@ function AppRoutes() {
       <div className="fixed -top-48 -right-48 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[150px] -z-0" />
       <div className="fixed -bottom-48 -left-48 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[150px] -z-0" />
       
-      {/* Sidebar for Desktop */}
-      <Sidebar className="hidden lg:flex" />
+      {/* Sidebar for Desktop & Mobile Toggle */}
+      <Sidebar 
+        className={cn(
+          "md:flex",
+          isMobile ? (sidebarOpen ? "translate-x-0 fixed inset-0 z-[110] w-full" : "-translate-x-full fixed inset-0 z-[110] w-full") : "relative"
+        )} 
+        onClose={() => setSidebarOpen(false)}
+      />
+
+      {/* Mobile Menu Toggle Button */}
+      {isMobile && !sidebarOpen && (
+        <button 
+          onClick={() => setSidebarOpen(true)}
+          className="fixed top-6 left-6 z-[100] h-12 w-12 glass rounded-2xl flex items-center justify-center text-primary border-white/10 shadow-2xl animate-fade-in"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      )}
+
+      {/* Overlay for mobile sidebar */}
+      {isMobile && sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] animate-fade-in"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       <main className="relative z-10 flex-1 min-h-screen">
         <div className="mx-auto w-full max-w-7xl p-4 md:p-10 pb-32 lg:pb-10">
@@ -65,7 +93,7 @@ function AppRoutes() {
       </main>
       
       {/* BottomNav only for mobile */}
-      <BottomNav className="lg:hidden" />
+      <BottomNav className="md:hidden" />
     </div>
   );
 }

@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Package, Settings, LogOut, ShoppingBag, User, BarChart3, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Home, Package, Settings, LogOut, ShoppingBag, User, BarChart3, ShoppingCart, TrendingUp, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from './ui/button';
 
 interface SidebarProps {
   className?: string;
+  onClose?: () => void;
 }
 
 const menuItems = [
@@ -16,15 +17,28 @@ const menuItems = [
   { icon: Settings, label: 'Ajustes', path: '/ajustes' },
 ];
 
-export default function Sidebar({ className }: SidebarProps) {
+export default function Sidebar({ className, onClose }: SidebarProps) {
   const { pathname } = useLocation();
   const { user, signOut, workshopName } = useAuth();
 
+  const handleSignOut = async () => {
+    if (window.confirm("Deseja realmente sair da conta?")) {
+      await signOut();
+    }
+  };
+
   return (
     <aside className={cn(
-      "w-80 flex-col bg-background/50 backdrop-blur-3xl border-r border-white/5 p-10 transition-all duration-300 hidden lg:flex",
+      "w-80 flex-col bg-background/80 md:bg-background/50 backdrop-blur-3xl border-r border-white/5 p-10 transition-all duration-500 ease-in-out hidden md:flex",
       className
     )}>
+      {/* Mobile Close Button */}
+      <button 
+        onClick={onClose}
+        className="md:hidden absolute top-6 right-6 h-12 w-12 glass rounded-2xl flex items-center justify-center text-muted-foreground/40 hover:text-foreground border-white/10"
+      >
+        <X className="h-6 w-6" />
+      </button>
       {/* Profile Header */}
       <div className="flex items-center gap-5 mb-16 p-3 rounded-[2rem] hover:bg-white/5 transition-all cursor-pointer group border border-transparent hover:border-white/5">
         <div className="h-14 w-14 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/20 shadow-2xl group-hover:scale-110 transition-transform">
@@ -68,7 +82,7 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="mt-auto pt-10 border-t border-white/5">
         <Button 
           variant="ghost" 
-          onClick={() => signOut()}
+          onClick={handleSignOut}
           className="w-full justify-start gap-5 h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 px-6 transition-all"
         >
           <LogOut className="h-5 w-5" />
