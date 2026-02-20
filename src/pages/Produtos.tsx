@@ -52,11 +52,12 @@ export default function Produtos() {
       return;
     }
 
+    // TODO: Reabilitar envio de 'custo' assim que o banco for migrado
     const { error } = await supabase.from('produtos').insert({
       user_id: user.id,
       nome: form.nome,
       valor: valorFloat,
-      custo: custoFloat,
+      // custo: custoFloat, -> Comentado até migração do banco
     });
 
     if (error) {

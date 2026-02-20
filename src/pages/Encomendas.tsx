@@ -38,13 +38,32 @@ export default function Encomendas() {
 
   const fetchEncomendas = async () => {
     if (!user) return;
+    // Trocando para nova tabela 'pedidos' para evitar conflitos de migração
     const { data } = await supabase
-      .from('encomendas')
+      .from('pedidos') 
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
-    setEncomendas((data as Encomenda[]) ?? []);
+    setEncomendas((data as any[]) ?? []);
   };
+
+  const fetchCatalog = async () => {
+    if (!user) return;
+    const { data } = await supabase.from('produtos').select('*').order('nome');
+    setCatalog(data ?? []);
+  };
+
+  const fetchClients = async () => {
+    if (!user) return;
+    const { data } = await supabase.from('clientes').select('*').order('nome');
+    setClients(data ?? []);
+  };
+
+  useEffect(() => { 
+    fetchEncomendas(); 
+    fetchCatalog();
+    fetchClients();
+  }, [user]);
 
   const fetchCatalog = async () => {
     if (!user) return;
@@ -81,7 +100,7 @@ export default function Encomendas() {
       return;
     }
 
-    const { error } = await supabase.from('encomendas').insert({
+    const { error } = await supabase.from('pedidos').insert({
       user_id: user.id,
       cliente: form.cliente,
       descricao: form.descricao,
@@ -91,8 +110,8 @@ export default function Encomendas() {
     });
 
     if (error) {
-      console.error('Erro ao criar encomenda:', error);
-      toast({ title: 'Erro ao salvar', description: error.message || 'Verifique seus dados e tente novamente.', variant: 'destructive' });
+      console.error('Erro ao criar pedido:', error);
+      toast({ title: 'Erro ao salvar', description: error.message || 'Verifique seus dados.', variant: 'destructive' });
     } else {
       toast({ title: 'Encomenda criada com sucesso!' });
       setForm({ cliente: '', descricao: '', valor: '', custo: '' });
@@ -102,7 +121,7 @@ export default function Encomendas() {
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
-    const { error } = await supabase.from('encomendas').update({ status: newStatus }).eq('id', id);
+    const { error } = await supabase.from('pedidos').update({ status: newStatus }).eq('id', id);
     if (error) {
       toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     } else {
@@ -112,7 +131,7 @@ export default function Encomendas() {
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from('encomendas').delete().eq('id', id);
+    await supabase.from('pedidos').delete().eq('id', id);
     toast({ title: 'Encomenda removida' });
     fetchEncomendas();
   };
