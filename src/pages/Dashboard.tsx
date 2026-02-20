@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { formatCurrency } from '@/lib/formatters';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, ArrowUpRight, Clock, Landmark, MoreHorizontal, TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
+import { AlertCircle, ArrowUpRight, Clock, Landmark, MoreHorizontal, TrendingDown, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { cn } from '@/lib/utils';
 
