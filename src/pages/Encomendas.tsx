@@ -44,7 +44,7 @@ export default function Encomendas() {
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
-    setEncomendas((data as any[]) ?? []);
+    setEncomendas(data ?? []);
   };
 
   useEffect(() => { 

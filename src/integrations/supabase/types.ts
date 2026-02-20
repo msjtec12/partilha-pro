@@ -134,6 +134,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pedidos: {
+        Row: {
+          cliente: string
+          created_at: string
+          descricao: string
+          id: string
+          status: string
+          user_id: string
+          valor: number
+          custo: number
+        }
+        Insert: {
+          cliente: string
+          created_at?: string
+          descricao: string
+          id?: string
+          status?: string
+          user_id: string
+          valor?: number
+          custo?: number
+        }
+        Update: {
+          cliente?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          status?: string
+          user_id?: string
+          valor?: number
+          custo?: number
+        }
+        Relationships: []
+      }
       produtos: {
         Row: {
           created_at: string
