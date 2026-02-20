@@ -120,27 +120,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    console.log("AuthProvider: Starting signOut process...");
+    console.log("AuthProvider: Starting aggressive signOut process...");
     
-    // Clear local state immediately for better UX
+    // 1. Clear React state immediately
     setSession(null);
     setUser(null);
     setProfile(null);
 
     try {
-      // Attempt to sign out from Supabase with a fast timeout
-      // We don't want a network error or client misconfiguration to block the logout
+      // 2. Clear ALL storage types that Supabase might use
+      // Clear LocalStorage
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.includes('auth-token') || key.startsWith('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Clear Cookies (Supabase often uses them for persistence)
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+
+      // Clear SessionStorage
+      sessionStorage.clear();
+      
+      console.log("AuthProvider: Local storage and cookies wiped.");
+    } catch (e) {
+       console.error("AuthProvider: Error wiping storage:", e);
+    }
+
+    try {
+      // 3. Inform Supabase cloud with a very tight timeout
       await Promise.race([
         supabase.auth.signOut(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Signout timeout')), 1000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Signout timeout')), 500))
       ]);
-      console.log("AuthProvider: Supabase session cleared.");
     } catch (e) {
-      console.warn("AuthProvider: Supabase signOut handled (success or timeout):", e);
+      console.warn("AuthProvider: Cloud signOut handled/skipped.");
     } finally {
-      console.log("AuthProvider: Redirecting to landing page...");
-      // Use window.location.href or replace to force a full reload and clear any state
-      window.location.replace('/?logout=true');
+      // 4. HARD RELOAD to clear any remaining in-memory state in the browser
+      console.log("AuthProvider: Executing hard redirect...");
+      window.location.href = window.location.origin + '/auth?logout=true';
     }
   };
 
