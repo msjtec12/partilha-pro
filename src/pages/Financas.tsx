@@ -105,20 +105,34 @@ export default function Financas() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    const { error } = await supabase.from('despesas').insert({
-      user_id: user.id,
-      descricao: form.descricao,
-      valor: parseFloat(form.valor.replace(',', '.')),
-      categoria: form.categoria,
-    });
-    if (error) {
-      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
-    } else {
-      toast({ title: 'Despesa registrada!' });
-      setForm({ descricao: '', valor: '', categoria: 'Produtos' });
-      setOpen(false);
-      fetchDespesas();
-      fetchMonthlyStats();
+    
+    console.log("Financeiro: Iniciando salvamento de despesa...", form);
+    
+    try {
+      const { error } = await Promise.race([
+        supabase.from('despesas').insert({
+          user_id: user.id,
+          descricao: form.descricao,
+          valor: parseFloat(form.valor.replace(',', '.')),
+          categoria: form.categoria,
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Tempo de resposta excedido ao salvar')), 10000))
+      ]) as any;
+
+      if (error) {
+        console.error('Erro ao criar despesa:', error);
+        toast({ title: 'Erro', description: error.message, variant: 'destructive' });
+      } else {
+        console.log("Financeiro: Despesa salva com sucesso");
+        toast({ title: 'Despesa registrada!' });
+        setForm({ descricao: '', valor: '', categoria: 'Produtos' });
+        setOpen(false);
+        fetchDespesas();
+        fetchMonthlyStats();
+      }
+    } catch (err: any) {
+      console.error('Exceção ao criar despesa:', err);
+      toast({ title: 'Erro de Conexão', description: err.message || 'O banco de dados não respondeu.', variant: 'destructive' });
     }
   };
 

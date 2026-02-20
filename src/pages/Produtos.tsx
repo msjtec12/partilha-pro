@@ -55,22 +55,30 @@ export default function Produtos() {
     // TODO: Reabilitar envio de 'custo' assim que o banco for migrado
     console.log("Produtos: Iniciando salvamento...", { nome: form.nome, valor: valorFloat, custo: custoFloat });
     
-    const { data, error } = await supabase.from('produtos').insert({
-      user_id: user.id,
-      nome: form.nome,
-      valor: valorFloat,
-      custo: custoFloat,
-    }).select();
+    try {
+      const { data, error } = await Promise.race([
+        supabase.from('produtos').insert({
+          user_id: user.id,
+          nome: form.nome,
+          valor: valorFloat,
+          custo: custoFloat,
+        }).select(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Tempo de resposta excedido ao salvar')), 10000))
+      ]) as any;
 
-    if (error) {
-      console.error('Erro ao criar produto:', error);
-      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
-    } else {
-      console.log("Produtos: Salvo com sucesso!", data);
-      toast({ title: 'Produto cadastrado!' });
-      setForm({ nome: '', valor: '', custo: '' });
-      setOpen(false);
-      fetchProdutos();
+      if (error) {
+        console.error('Erro ao criar produto:', error);
+        toast({ title: 'Erro', description: error.message, variant: 'destructive' });
+      } else {
+        console.log("Produtos: Salvo com sucesso!", data);
+        toast({ title: 'Produto cadastrado!' });
+        setForm({ nome: '', valor: '', custo: '' });
+        setOpen(false);
+        fetchProdutos();
+      }
+    } catch (err: any) {
+      console.error('Exceção ao criar produto:', err);
+      toast({ title: 'Erro de Conexão', description: err.message || 'O banco de dados não respondeu.', variant: 'destructive' });
     }
   };
 

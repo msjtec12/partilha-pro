@@ -89,25 +89,33 @@ export default function Encomendas() {
     }
 
     console.log("Pedidos: Iniciando salvamento...", { cliente: form.cliente, valor: valorFloat });
+    
+    try {
+      const { data: insertedData, error } = await Promise.race([
+        supabase.from('pedidos').insert({
+          user_id: user.id,
+          cliente: form.cliente,
+          descricao: form.descricao,
+          valor: valorFloat,
+          custo: custoFloat,
+          status: 'Pendente'
+        }).select(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Tempo de resposta excedido ao salvar')), 10000))
+      ]) as any;
 
-    const { data: insertedData, error } = await supabase.from('pedidos').insert({
-      user_id: user.id,
-      cliente: form.cliente,
-      descricao: form.descricao,
-      valor: valorFloat,
-      custo: custoFloat,
-      status: 'Pendente'
-    }).select();
-
-    if (error) {
-      console.error('Erro ao criar pedido:', error);
-      toast({ title: 'Erro ao salvar', description: error.message || 'Verifique seus dados.', variant: 'destructive' });
-    } else {
-      console.log("Pedidos: Salvo com sucesso!", insertedData);
-      toast({ title: 'Encomenda criada com sucesso!' });
-      setForm({ cliente: '', descricao: '', valor: '', custo: '' });
-      setOpen(false);
-      fetchEncomendas();
+      if (error) {
+        console.error('Erro ao criar pedido:', error);
+        toast({ title: 'Erro ao salvar', description: error.message || 'Verifique seus dados.', variant: 'destructive' });
+      } else {
+        console.log("Pedidos: Salvo com sucesso!", insertedData);
+        toast({ title: 'Encomenda criada com sucesso!' });
+        setForm({ cliente: '', descricao: '', valor: '', custo: '' });
+        setOpen(false);
+        fetchEncomendas();
+      }
+    } catch (err: any) {
+      console.error('Exceção ao criar pedido:', err);
+      toast({ title: 'Erro de Conexão', description: err.message || 'O banco de dados não respondeu.', variant: 'destructive' });
     }
   };
 

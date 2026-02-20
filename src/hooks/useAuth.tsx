@@ -29,37 +29,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle(); // Use maybeSingle to avoid 406 errors
+      console.log("AuthProvider: Fetching profile...", userId);
+      // Timeout to prevent hanging on network issues
+      const { data, error } = await Promise.race([
+        supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Profile timeout')), 5000))
+      ]) as any;
       
-      if (!error && data) {
+      if (error) {
+        console.error("AuthProvider: Profile error:", error);
+      } else {
+        console.log("AuthProvider: Profile fetched:", data ? "found" : "empty");
         setProfile(data);
       }
     } catch (e) {
-      console.error("fetchProfile error:", e);
+      console.error("AuthProvider: Profile exception:", e);
     }
   };
 
   useEffect(() => {
     console.log("AuthProvider: Initializing...");
     
-    // Safety timeout to prevent infinite loading
     const safetyTimeout = setTimeout(() => {
       if (loading) {
         console.warn("AuthProvider: Safety timeout reached!");
         setLoading(false);
       }
-    }, 15000); // Increased to 15s
+    }, 15000);
 
-    // Initial session check
     const initSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log("AuthProvider: Getting initial session...");
+        const { data: { session }, error } = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Session timeout')), 5000))
+        ]) as any;
+
         if (error) {
-          if (error.message.includes("Refresh Token Not Found") || error.message.includes("invalid refresh token")) {
+          console.error("AuthProvider: Session error:", error);
+          if (error.message?.includes("Refresh Token Not Found")) {
             await supabase.auth.signOut();
           }
         }
@@ -67,10 +75,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          fetchProfile(session.user.id); // Non-blocking
         }
       } catch (e) {
-        console.error("initSession error:", e);
+        console.error("AuthProvider: Session exception:", e);
       } finally {
         setLoading(false);
         clearTimeout(safetyTimeout);
@@ -79,14 +87,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log("AuthProvider: Auth event:", event);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
-        await fetchProfile(currentSession.user.id);
+        fetchProfile(currentSession.user.id); // Non-blocking
       } else {
         setProfile(null);
       }
