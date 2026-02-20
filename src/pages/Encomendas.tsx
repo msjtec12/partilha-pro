@@ -47,18 +47,6 @@ export default function Encomendas() {
     setEncomendas((data as any[]) ?? []);
   };
 
-  const fetchCatalog = async () => {
-    if (!user) return;
-    const { data } = await supabase.from('produtos').select('*').order('nome');
-    setCatalog(data ?? []);
-  };
-
-  const fetchClients = async () => {
-    if (!user) return;
-    const { data } = await supabase.from('clientes').select('*').order('nome');
-    setClients(data ?? []);
-  };
-
   useEffect(() => { 
     fetchEncomendas(); 
     fetchCatalog();

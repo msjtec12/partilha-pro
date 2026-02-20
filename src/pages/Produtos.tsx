@@ -57,7 +57,7 @@ export default function Produtos() {
       user_id: user.id,
       nome: form.nome,
       valor: valorFloat,
-      // custo: custoFloat, -> Comentado até migração do banco
+      custo: custoFloat,
     });
 
     if (error) {
