@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn("AuthProvider: Safety timeout reached!");
         setLoading(false);
       }
-    }, 8000);
+    }, 15000); // Increased to 15s
 
     // Initial session check
     const initSession = async () => {
@@ -121,21 +121,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     console.log("AuthProvider: Starting signOut process...");
+    
+    // Clear local state immediately for better UX
+    setSession(null);
+    setUser(null);
+    setProfile(null);
+
     try {
-      // Clear Supabase session first
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("AuthProvider: Supabase signOut error:", error);
-      }
+      // Attempt to sign out from Supabase with a fast timeout
+      // We don't want a network error or client misconfiguration to block the logout
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Signout timeout')), 1000))
+      ]);
+      console.log("AuthProvider: Supabase session cleared.");
     } catch (e) {
-      console.error("AuthProvider: Supabase signOut exception:", e);
+      console.warn("AuthProvider: Supabase signOut handled (success or timeout):", e);
     } finally {
-      // Always clear local state and redirect
-      console.log("AuthProvider: Clearing local state and redirecting...");
-      setSession(null);
-      setUser(null);
-      setProfile(null);
-      window.location.replace('/');
+      console.log("AuthProvider: Redirecting to landing page...");
+      // Use window.location.href or replace to force a full reload and clear any state
+      window.location.replace('/?logout=true');
     }
   };
 

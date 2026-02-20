@@ -88,19 +88,22 @@ export default function Encomendas() {
       return;
     }
 
-    const { error } = await supabase.from('pedidos').insert({
+    console.log("Pedidos: Iniciando salvamento...", { cliente: form.cliente, valor: valorFloat });
+
+    const { data: insertedData, error } = await supabase.from('pedidos').insert({
       user_id: user.id,
       cliente: form.cliente,
       descricao: form.descricao,
       valor: valorFloat,
       custo: custoFloat,
       status: 'Pendente'
-    });
+    }).select();
 
     if (error) {
       console.error('Erro ao criar pedido:', error);
       toast({ title: 'Erro ao salvar', description: error.message || 'Verifique seus dados.', variant: 'destructive' });
     } else {
+      console.log("Pedidos: Salvo com sucesso!", insertedData);
       toast({ title: 'Encomenda criada com sucesso!' });
       setForm({ cliente: '', descricao: '', valor: '', custo: '' });
       setOpen(false);

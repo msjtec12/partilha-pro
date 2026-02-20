@@ -53,17 +53,20 @@ export default function Produtos() {
     }
 
     // TODO: Reabilitar envio de 'custo' assim que o banco for migrado
-    const { error } = await supabase.from('produtos').insert({
+    console.log("Produtos: Iniciando salvamento...", { nome: form.nome, valor: valorFloat, custo: custoFloat });
+    
+    const { data, error } = await supabase.from('produtos').insert({
       user_id: user.id,
       nome: form.nome,
       valor: valorFloat,
       custo: custoFloat,
-    });
+    }).select();
 
     if (error) {
       console.error('Erro ao criar produto:', error);
       toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     } else {
+      console.log("Produtos: Salvo com sucesso!", data);
       toast({ title: 'Produto cadastrado!' });
       setForm({ nome: '', valor: '', custo: '' });
       setOpen(false);
