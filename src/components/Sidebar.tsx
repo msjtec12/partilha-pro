@@ -11,9 +11,9 @@ interface SidebarProps {
 
 const menuItems = [
   { icon: Home, label: 'Início', path: '/' },
-  { icon: TrendingUp, label: 'Performance', path: '/' },
   { icon: ShoppingBag, label: 'Encomendas', path: '/encomendas' },
   { icon: Package, label: 'Catálogo', path: '/produtos' },
+  { icon: BarChart3, label: 'Finanças', path: '/financas' },
   { icon: Settings, label: 'Ajustes', path: '/ajustes' },
 ];
 

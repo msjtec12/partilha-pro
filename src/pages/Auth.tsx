@@ -68,7 +68,7 @@ export default function Auth() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
-                  className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
+                  className="h-14 rounded-2xl bg-white/10 border-white/10 placeholder:text-muted-foreground/50 font-bold text-white focus:bg-white/20 transition-all"
                 />
               </div>
               <div className="space-y-2">
@@ -78,7 +78,7 @@ export default function Auth() {
                   value={workshopName}
                   onChange={(e) => setWorkshopName(e.target.value)}
                   required
-                  className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
+                  className="h-14 rounded-2xl bg-white/10 border-white/10 placeholder:text-muted-foreground/50 font-bold text-white focus:bg-white/20 transition-all"
                 />
               </div>
             </>
@@ -90,7 +90,7 @@ export default function Auth() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
+              className="h-14 rounded-2xl bg-white/10 border-white/10 placeholder:text-muted-foreground/50 font-bold text-white focus:bg-white/20 transition-all"
             />
           </div>
           <div className="space-y-2">
@@ -101,7 +101,7 @@ export default function Auth() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="h-14 rounded-2xl bg-white/5 border-white/5 placeholder:text-muted-foreground/30 font-bold"
+              className="h-14 rounded-2xl bg-white/10 border-white/10 placeholder:text-muted-foreground/50 font-bold text-white focus:bg-white/20 transition-all"
             />
           </div>
           <Button type="submit" className="h-14 w-full text-sm font-black uppercase tracking-tighter rounded-full premium-gradient shadow-2xl shadow-primary/30 mt-6 transition-all hover:scale-105 active:scale-95" disabled={loading}>

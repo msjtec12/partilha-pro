@@ -308,13 +308,13 @@ export default function Ajustes() {
                 placeholder="Nome do Cliente" 
                 value={newClient.nome}
                 onChange={e => setNewClient({...newClient, nome: e.target.value})}
-                className="rounded-xl border-white/10 bg-background/40"
+                className="rounded-xl border-white/10 bg-white/10 text-white font-bold placeholder:text-muted-foreground/50 focus:bg-white/20 transition-all h-11"
               />
               <Input 
                 placeholder="Contato (WhatsApp/Instagram)" 
                 value={newClient.contato}
                 onChange={e => setNewClient({...newClient, contato: e.target.value})}
-                className="rounded-xl border-white/10 bg-background/40"
+                className="rounded-xl border-white/10 bg-white/10 text-white font-bold placeholder:text-muted-foreground/50 focus:bg-white/20 transition-all h-11"
               />
               <Button 
                 onClick={handleAddClient}

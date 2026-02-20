@@ -214,14 +214,14 @@ export default function Encomendas() {
                   value={form.cliente}
                   onChange={e => setForm({ ...form, cliente: e.target.value })}
                   required
-                  className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                  className="h-12 rounded-2xl border-white/10 bg-white/10 px-4 font-bold text-sm text-white focus:bg-white/20 transition-all placeholder:text-muted-foreground/50"
                 />
                 <Input
                   placeholder="Descrição da Arte"
                   value={form.descricao}
                   onChange={e => setForm({ ...form, descricao: e.target.value })}
                   required
-                  className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                  className="h-12 rounded-2xl border-white/10 bg-white/10 px-4 font-bold text-sm text-white focus:bg-white/20 transition-all placeholder:text-muted-foreground/50"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <Input
@@ -230,14 +230,14 @@ export default function Encomendas() {
                     onChange={e => setForm({ ...form, valor: e.target.value })}
                     required
                     inputMode="decimal"
-                    className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                    className="h-12 rounded-2xl border-white/10 bg-white/10 px-4 font-bold text-sm text-white focus:bg-white/20 transition-all placeholder:text-muted-foreground/50"
                   />
                   <Input
                     placeholder="Custo (R$)"
                     value={form.custo}
                     onChange={e => setForm({ ...form, custo: e.target.value })}
                     inputMode="decimal"
-                    className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                    className="h-12 rounded-2xl border-white/10 bg-white/10 px-4 font-bold text-sm text-white focus:bg-white/20 transition-all placeholder:text-muted-foreground/50"
                   />
                 </div>
                 <Button type="submit" className="w-full rounded-full premium-gradient h-13 text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/30 mt-1">

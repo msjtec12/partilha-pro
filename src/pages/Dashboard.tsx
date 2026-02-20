@@ -103,43 +103,55 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10">
+        {/* Metric Card 1: Faturamento */}
+        <div className="glass p-8 rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
+          <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+              <TrendingUp className="h-5 w-5" />
+            </div>
+          </div>
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Vendas (Mês)</p>
+            <h2 className="text-3xl font-black tracking-tighter text-foreground">{formatCurrency(totalEncomendas)}</h2>
+          </div>
+        </div>
+
+        {/* Metric Card 2: Despesas */}
+        <div className="glass p-8 rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
+          <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-rose-500/5 rounded-full blur-3xl group-hover:bg-rose-500/10 transition-colors" />
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-500">
+              <DollarSign className="h-5 w-5" />
+            </div>
+          </div>
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Despesas (Mês)</p>
+            <h2 className="text-3xl font-black tracking-tighter text-foreground">{formatCurrency(totalDespesas)}</h2>
+          </div>
+        </div>
+
+        {/* Metric Card 3: Lucro Líquido */}
+        <div className="glass p-8 rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
+          <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-emerald-500/5 rounded-full blur-3xl group-hover:bg-emerald-500/10 transition-colors" />
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500">
+              <BarChart3 className="h-5 w-5" />
+            </div>
+          </div>
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Lucro Real</p>
+            <h2 className="text-3xl font-black tracking-tighter text-foreground">{formatCurrency(realProfit)}</h2>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Left Stats Column */}
         <div className="lg:col-span-2 space-y-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {/* Metric Card 1: Faturamento */}
-            <div className="glass p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
-              <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-              <div className="flex items-center justify-between mb-6 md:mb-8 relative z-10">
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                  <TrendingUp className="h-5 w-5" />
-                </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-1 text-[10px] font-black text-emerald-500 uppercase border border-emerald-500/20">
-                  <TrendingUp className="h-3 w-3" /> +12%
-                </div>
-              </div>
-              <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Faturamento</p>
-                <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-foreground">{formatCurrency(totalEncomendas)}</h2>
-              </div>
-            </div>
-
-            {/* Metric Card 2: Pro-Labore */}
-            <div className="glass p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border-white/5 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/[0.02]">
-              <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-              <div className="flex items-center justify-between mb-6 md:mb-8 relative z-10">
-                <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500">
-                  <DollarSign className="h-5 w-5" />
-                </div>
-                <span className="px-2 py-1 rounded-full bg-orange-500/10 text-[9px] font-black text-orange-500 uppercase border border-orange-500/20">
-                  {proLaborePercent}% Divisão
-                </span>
-              </div>
-              <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Pró-Labore</p>
-                <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-foreground">{formatCurrency(meuLucro)}</h2>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 md:gap-8">
+            {/* Omitted redundant cards, now handled above */}
           </div>
 
           {/* Latest Orders List/Table */}

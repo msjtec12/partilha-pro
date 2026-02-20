@@ -113,7 +113,7 @@ export default function Produtos() {
                   value={form.nome} 
                   onChange={e => setForm({ ...form, nome: e.target.value })} 
                   required 
-                  className="rounded-xl border-white/10 bg-background/50 h-12 px-4 text-sm" 
+                  className="rounded-xl border-white/10 bg-white/10 h-12 px-4 text-sm text-white font-bold focus:bg-white/20 transition-all placeholder:text-muted-foreground/50" 
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -125,7 +125,7 @@ export default function Produtos() {
                     onChange={e => setForm({ ...form, valor: e.target.value })} 
                     required 
                     inputMode="decimal"
-                    className="rounded-xl border-white/10 bg-background/50 h-12 px-4 text-sm" 
+                    className="rounded-xl border-white/10 bg-white/10 h-12 px-4 text-sm text-white font-bold focus:bg-white/20 transition-all placeholder:text-muted-foreground/50" 
                   />
                 </div>
                 <div className="space-y-2">
@@ -135,7 +135,7 @@ export default function Produtos() {
                     value={form.custo} 
                     onChange={e => setForm({ ...form, custo: e.target.value })} 
                     inputMode="decimal"
-                    className="rounded-xl border-white/10 bg-background/50 h-12 px-4 text-sm" 
+                    className="rounded-xl border-white/10 bg-white/10 h-12 px-4 text-sm text-white font-bold focus:bg-white/20 transition-all placeholder:text-muted-foreground/50" 
                   />
                 </div>
               </div>
@@ -150,7 +150,7 @@ export default function Produtos() {
           placeholder="Buscar no catálogo..." 
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="rounded-xl border-white/10 bg-background/50 h-11 pl-10"
+          className="rounded-xl border-white/10 bg-white/10 h-11 pl-10 text-white font-bold placeholder:text-muted-foreground/50 focus:bg-white/20 transition-all"
         />
         <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground/50" />
       </div>

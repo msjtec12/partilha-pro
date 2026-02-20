@@ -209,10 +209,10 @@ export default function Financas() {
                   <DialogTitle className="text-3xl font-black tracking-tighter">Registrar Saída</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreate} className="space-y-6">
-                  <Input placeholder="Descrição do Gasto" value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })} required className="h-14 rounded-2xl border-white/5 bg-white/5 px-6 font-bold" />
-                  <Input placeholder="Valor (R$)" value={form.valor} onChange={e => setForm({ ...form, valor: e.target.value })} required className="h-14 rounded-2xl border-white/5 bg-white/5 px-6 font-bold" />
+                  <Input placeholder="Descrição do Gasto" value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })} required className="h-14 rounded-2xl border-white/10 bg-white/10 px-6 font-bold text-white focus:bg-white/20 transition-all placeholder:text-muted-foreground/50" />
+                  <Input placeholder="Valor (R$)" value={form.valor} onChange={e => setForm({ ...form, valor: e.target.value })} required className="h-14 rounded-2xl border-white/10 bg-white/10 px-6 font-bold text-white focus:bg-white/20 transition-all placeholder:text-muted-foreground/50" />
                   <Select value={form.categoria} onValueChange={v => setForm({ ...form, categoria: v })}>
-                    <SelectTrigger className="h-14 rounded-2xl border-white/5 bg-white/5 px-6 font-bold">
+                    <SelectTrigger className="h-14 rounded-2xl border-white/10 bg-white/10 px-6 font-bold text-white focus:bg-white/20 transition-all">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="rounded-2xl border-white/10 glass">
