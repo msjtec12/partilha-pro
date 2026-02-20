@@ -44,14 +44,23 @@ export default function Produtos() {
     e.preventDefault();
     if (!user) return;
 
+    const valorFloat = parseFloat(form.valor.replace(',', '.'));
+    const custoFloat = parseFloat(form.custo.replace(',', '.') || '0');
+
+    if (isNaN(valorFloat)) {
+      toast({ title: 'Valor inválido', description: 'Por favor, insira um valor de venda válido.', variant: 'destructive' });
+      return;
+    }
+
     const { error } = await supabase.from('produtos').insert({
       user_id: user.id,
       nome: form.nome,
-      valor: parseFloat(form.valor.replace(',', '.')),
-      custo: parseFloat(form.custo.replace(',', '.') || '0'),
+      valor: valorFloat,
+      custo: custoFloat,
     });
 
     if (error) {
+      console.error('Erro ao criar produto:', error);
       toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Produto cadastrado!' });
@@ -88,44 +97,45 @@ export default function Produtos() {
               <Plus className="h-4 w-4" /> Novo
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-3xl border-white/10 glass">
+          <DialogContent className="w-[95vw] max-w-md rounded-3xl border-white/10 glass p-5 sm:p-7">
             <DialogHeader>
-              <DialogTitle>Novo Produto/Serviço</DialogTitle>
+              <DialogTitle className="text-xl font-black tracking-tighter">Novo Produto/Serviço</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4 pt-4">
+            <form onSubmit={handleCreate} className="space-y-4 pt-3">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 px-1">Identificação</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60 px-1">Identificação</p>
                 <Input 
                   placeholder="Nome do Produto (ex: Bolo de Pote)" 
                   value={form.nome} 
                   onChange={e => setForm({ ...form, nome: e.target.value })} 
                   required 
-                  className="rounded-xl border-white/10 bg-background/50 h-12" 
+                  className="rounded-xl border-white/10 bg-background/50 h-12 px-4 text-sm" 
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 px-1">Valor Venda</p>
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60 px-1">Valor Venda</p>
                   <Input 
-                    placeholder="R$ 0,00" 
+                    placeholder="0,00" 
                     value={form.valor} 
                     onChange={e => setForm({ ...form, valor: e.target.value })} 
                     required 
-                    className="rounded-xl border-white/10 bg-background/50 h-12" 
+                    inputMode="decimal"
+                    className="rounded-xl border-white/10 bg-background/50 h-12 px-4 text-sm" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 px-1">Custo Médio</p>
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60 px-1">Custo Médio</p>
                   <Input 
-                    placeholder="R$ 0,00" 
+                    placeholder="0,00" 
                     value={form.custo} 
                     onChange={e => setForm({ ...form, custo: e.target.value })} 
-                    required 
-                    className="rounded-xl border-white/10 bg-background/50 h-12" 
+                    inputMode="decimal"
+                    className="rounded-xl border-white/10 bg-background/50 h-12 px-4 text-sm" 
                   />
                 </div>
               </div>
-              <Button type="submit" className="w-full rounded-xl premium-gradient h-12 text-base font-bold mt-2">Salvar no Catálogo</Button>
+              <Button type="submit" className="w-full rounded-xl premium-gradient h-12 text-sm font-bold mt-1">Salvar no Catálogo</Button>
             </form>
           </DialogContent>
         </Dialog>

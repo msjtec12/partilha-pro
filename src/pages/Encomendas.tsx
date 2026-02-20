@@ -73,17 +73,28 @@ export default function Encomendas() {
       return;
     }
 
+    const valorFloat = parseFloat(form.valor.replace(',', '.'));
+    const custoFloat = parseFloat(form.custo.replace(',', '.') || '0');
+
+    if (isNaN(valorFloat)) {
+      toast({ title: 'Valor inválido', description: 'Por favor, insira um valor válido para Venda.', variant: 'destructive' });
+      return;
+    }
+
     const { error } = await supabase.from('encomendas').insert({
       user_id: user.id,
       cliente: form.cliente,
       descricao: form.descricao,
-      valor: parseFloat(form.valor.replace(',', '.')),
-      custo: parseFloat(form.custo.replace(',', '.') || '0'),
+      valor: valorFloat,
+      custo: custoFloat,
+      status: 'Pendente'
     });
+
     if (error) {
-      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
+      console.error('Erro ao criar encomenda:', error);
+      toast({ title: 'Erro ao salvar', description: error.message || 'Verifique seus dados e tente novamente.', variant: 'destructive' });
     } else {
-      toast({ title: 'Encomenda criada!' });
+      toast({ title: 'Encomenda criada com sucesso!' });
       setForm({ cliente: '', descricao: '', valor: '', custo: '' });
       setOpen(false);
       fetchEncomendas();
@@ -140,64 +151,89 @@ export default function Encomendas() {
           )}
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" className="h-14 px-8 gap-3 rounded-full premium-gradient shadow-2xl shadow-primary/30 font-black uppercase tracking-tighter text-xs" disabled={limitReached}>
-                <Plus className="h-5 w-5" /> NOVA ENCOMENDA
+              <Button size="sm" className="h-11 px-5 gap-2 rounded-full premium-gradient shadow-xl shadow-primary/30 font-black uppercase tracking-tighter text-xs" disabled={limitReached}>
+                <Plus className="h-4 w-4" /> Nova
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-[3rem] border-white/10 glass p-10 max-w-2xl">
-              <DialogHeader className="mb-8">
-                <DialogTitle className="text-4xl font-black tracking-tighter">Iniciando Arte</DialogTitle>
+            <DialogContent className="w-[95vw] max-w-lg rounded-3xl border-white/10 glass p-5 sm:p-8">
+              <DialogHeader className="mb-4">
+                <DialogTitle className="text-2xl sm:text-3xl font-black tracking-tighter">Iniciando Arte</DialogTitle>
               </DialogHeader>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-6">
-                   {catalog.length > 0 && (
-                    <div className="space-y-4">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">Usar do Catálogo</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {catalog.slice(0, 6).map((p: any) => (
-                          <Button
-                            key={p.id}
-                            variant="outline"
-                            className="rounded-xl border-white/5 h-12 text-[10px] bg-white/5 font-black uppercase tracking-widest justify-start px-4 truncate"
-                            onClick={() => setForm({ ...form, descricao: p.nome, valor: p.valor.toString().replace('.', ','), custo: p.custo.toString().replace('.', ',') })}
-                          >
-                            <ShoppingBag className="h-3 w-3 mr-2 shrink-0" /> {p.nome}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {clients.length > 0 && (
-                    <div className="space-y-4 pt-4 border-t border-white/5">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">Selecionar Cliente</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {clients.slice(0, 6).map((c: any) => (
-                          <Button
-                            key={c.id}
-                            variant="outline"
-                            className="rounded-xl border-white/5 h-12 text-[10px] bg-white/5 font-black uppercase tracking-widest justify-start px-4 truncate"
-                            onClick={() => setForm({ ...form, cliente: c.nome })}
-                          >
-                            <User className="h-3 w-3 mr-2 shrink-0" /> {c.nome}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <form onSubmit={handleCreate} className="space-y-4 bg-white/5 p-8 rounded-[2rem] border border-white/5">
-                  <Input placeholder="Artesão / Cliente" value={form.cliente} onChange={e => setForm({ ...form, cliente: e.target.value })} required className="h-14 rounded-2xl border-white/10 bg-background/50 px-6 font-bold" />
-                  <Input placeholder="Descrição da Arte" value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })} required className="h-14 rounded-2xl border-white/10 bg-background/50 px-6 font-bold" />
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input placeholder="Venda (R$)" value={form.valor} onChange={e => setForm({ ...form, valor: e.target.value })} required className="h-14 rounded-2xl border-white/10 bg-background/50 px-6 font-bold" />
-                    <Input placeholder="Custo (R$)" value={form.custo} onChange={e => setForm({ ...form, custo: e.target.value })} required className="h-14 rounded-2xl border-white/10 bg-background/50 px-6 font-bold" />
+              {/* Catalog quick-select chips — horizontal scroll */}
+              {catalog.length > 0 && (
+                <div className="space-y-2 mb-2">
+                  <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">Catálogo</p>
+                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                    {catalog.slice(0, 8).map((p: any) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-widest text-foreground/70 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
+                        onClick={() => setForm({ ...form, descricao: p.nome, valor: p.valor.toString().replace('.', ','), custo: p.custo.toString().replace('.', ',') })}
+                      >
+                        <ShoppingBag className="h-3 w-3 shrink-0" /> {p.nome}
+                      </button>
+                    ))}
                   </div>
-                  <Button type="submit" className="w-full rounded-full premium-gradient h-16 text-xs font-black uppercase tracking-widest shadow-2xl shadow-primary/30 mt-4">SALVAR NO LIVRO</Button>
-                </form>
-              </div>
+                </div>
+              )}
+
+              {/* Client quick-select chips */}
+              {clients.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">Clientes</p>
+                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                    {clients.slice(0, 8).map((c: any) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-widest text-foreground/70 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all"
+                        onClick={() => setForm({ ...form, cliente: c.nome })}
+                      >
+                        <User className="h-3 w-3 shrink-0" /> {c.nome}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleCreate} className="space-y-3">
+                <Input
+                  placeholder="Artesão / Cliente"
+                  value={form.cliente}
+                  onChange={e => setForm({ ...form, cliente: e.target.value })}
+                  required
+                  className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                />
+                <Input
+                  placeholder="Descrição da Arte"
+                  value={form.descricao}
+                  onChange={e => setForm({ ...form, descricao: e.target.value })}
+                  required
+                  className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input
+                    placeholder="Venda (R$)"
+                    value={form.valor}
+                    onChange={e => setForm({ ...form, valor: e.target.value })}
+                    required
+                    inputMode="decimal"
+                    className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                  />
+                  <Input
+                    placeholder="Custo (R$)"
+                    value={form.custo}
+                    onChange={e => setForm({ ...form, custo: e.target.value })}
+                    inputMode="decimal"
+                    className="h-12 rounded-2xl border-white/10 bg-background/50 px-4 font-bold text-sm"
+                  />
+                </div>
+                <Button type="submit" className="w-full rounded-full premium-gradient h-13 text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/30 mt-1">
+                  Salvar no Livro
+                </Button>
+              </form>
             </DialogContent>
           </Dialog>
         </div>

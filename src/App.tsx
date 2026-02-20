@@ -54,14 +54,7 @@ function AppRoutes() {
       <div className="fixed -bottom-48 -left-48 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[150px] -z-0" />
       
       {/* Mobile Menu Toggle Button - Using Tailwind for reliability */}
-      {!sidebarOpen && (
-        <button 
-          onClick={() => setSidebarOpen(true)}
-          className="fixed top-6 left-6 z-[100] h-12 w-12 glass rounded-2xl flex items-center justify-center text-primary border-white/10 shadow-2xl animate-fade-in md:hidden"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-      )}
+      {/* Mobile Menu Toggle Button Removed as requested */}
 
       {/* Sidebar for Desktop & Mobile Toggle */}
       <Sidebar 

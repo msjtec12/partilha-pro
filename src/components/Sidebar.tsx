@@ -83,7 +83,7 @@ export default function Sidebar({ className, onClose }: SidebarProps) {
         <Button 
           variant="ghost" 
           onClick={handleSignOut}
-          className="w-full justify-start gap-5 h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 px-6 transition-all"
+          className="w-full justify-start gap-5 px-6 py-4.5 h-auto rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.25em] text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-all"
         >
           <LogOut className="h-5 w-5" />
           Encerrar Sessão
