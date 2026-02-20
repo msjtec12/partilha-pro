@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, FileText, Share2, Download } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Plus, Trash2, FileText, Share2, Download, TrendingUp, TrendingDown, DollarSign, PieChart } from 'lucide-react';
 
 interface Despesa {
   id: string;
@@ -43,6 +44,7 @@ export default function Financas() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ descricao: '', valor: '', categoria: 'Produtos' });
+  const [summary, setSummary] = useState({ faturamento: 0, custos: 0, despesas: 0, lucro: 0 });
 
   const fetchDespesas = async () => {
     if (!user) return;
@@ -67,7 +69,38 @@ export default function Financas() {
   useEffect(() => { 
     fetchDespesas();
     fetchFechamentos();
+    fetchMonthlyStats();
   }, [user]);
+
+  const fetchMonthlyStats = async () => {
+    if (!user) return;
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const { data: pData } = await supabase
+      .from('pedidos')
+      .select('valor, custo')
+      .eq('user_id', user.id)
+      .eq('status', 'Recebido')
+      .gte('created_at', startOfMonth);
+
+    const { data: dData } = await supabase
+      .from('despesas')
+      .select('valor')
+      .eq('user_id', user.id)
+      .gte('data', startOfMonth.split('T')[0]);
+
+    const fat = pData?.reduce((s, p) => s + Number(p.valor), 0) ?? 0;
+    const cProd = pData?.reduce((s, p) => s + Number(p.custo || 0), 0) ?? 0;
+    const desp = dData?.reduce((s, d) => s + Number(d.valor), 0) ?? 0;
+
+    setSummary({
+      faturamento: fat,
+      custos: cProd,
+      despesas: desp,
+      lucro: fat - (cProd + desp)
+    });
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +118,7 @@ export default function Financas() {
       setForm({ descricao: '', valor: '', categoria: 'Produtos' });
       setOpen(false);
       fetchDespesas();
+      fetchMonthlyStats();
     }
   };
 
@@ -96,7 +130,7 @@ export default function Financas() {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const { data: encomendas } = await supabase
-      .from('encomendas')
+      .from('pedidos')
       .select('valor, custo, status')
       .eq('user_id', user.id)
       .in('status', ['Entregue', 'Recebido'])
@@ -191,6 +225,41 @@ export default function Financas() {
                 </form>
               </DialogContent>
             </Dialog>
+          </div>
+        </div>
+
+        {/* Resumo Financeiro do Mês */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 animate-slide-up">
+          <div className="glass p-6 md:p-8 rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-emerald-500/5 rounded-full blur-2xl" />
+            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-3 leading-none flex items-center gap-2">
+              <TrendingUp className="h-3 w-3 text-emerald-500" /> Faturamento (Mês)
+            </p>
+            <h3 className="text-2xl md:text-3xl font-black text-emerald-500 tracking-tighter">{formatCurrency(summary.faturamento)}</h3>
+          </div>
+          
+          <div className="glass p-6 md:p-8 rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-rose-500/5 rounded-full blur-2xl" />
+            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-3 leading-none flex items-center gap-2">
+              <TrendingDown className="h-3 w-3 text-rose-500" /> Custo Produção
+            </p>
+            <h3 className="text-2xl md:text-3xl font-black text-rose-500/80 tracking-tighter">{formatCurrency(summary.custos)}</h3>
+          </div>
+
+          <div className="glass p-6 md:p-8 rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-amber-500/5 rounded-full blur-2xl" />
+            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-3 leading-none flex items-center gap-2">
+              <PieChart className="h-3 w-3 text-amber-500" /> Despesas Operac.
+            </p>
+            <h3 className="text-2xl md:text-3xl font-black text-amber-500/80 tracking-tighter">{formatCurrency(summary.despesas)}</h3>
+          </div>
+
+          <div className="premium-gradient p-6 md:p-8 rounded-[2rem] shadow-xl shadow-primary/20 relative group overflow-hidden">
+             <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-white/10 rounded-full blur-2xl" />
+            <p className="text-[9px] font-black uppercase tracking-widest text-white/60 mb-3 leading-none flex items-center gap-2">
+              <DollarSign className="h-3 w-3 text-white" /> Lucro Líquido
+            </p>
+            <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter">{formatCurrency(summary.lucro)}</h3>
           </div>
         </div>
 

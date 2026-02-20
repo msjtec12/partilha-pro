@@ -31,7 +31,7 @@ export default function Dashboard() {
 
     const fetchData = async () => {
       const { data: encomendas } = await supabase
-        .from('encomendas')
+        .from('pedidos')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });

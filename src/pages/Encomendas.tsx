@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User } from 'lucide-react';
+import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User, CheckCircle } from 'lucide-react';
 import { exportToPDF } from '@/lib/pdfExport';
 
 interface Encomenda {
@@ -334,6 +334,16 @@ export default function Encomendas() {
                     <span className="text-[9px] font-black tracking-[0.3em] uppercase text-muted-foreground/30">{formatDate(enc.created_at)}</span>
                   </div>
                   <div className="flex items-center gap-3">
+                    {enc.status !== 'Recebido' && (
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-12 px-4 gap-2 rounded-2xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-black uppercase tracking-tighter text-[9px]"
+                        onClick={() => handleStatusChange(enc.id, 'Recebido')}
+                      >
+                        <CheckCircle className="h-4 w-4" /> Finalizar
+                      </Button>
+                    )}
                     <Select value={enc.status} onValueChange={(v) => handleStatusChange(enc.id, v)}>
                       <SelectTrigger className="h-12 w-12 rounded-2xl bg-white/5 border-white/5 font-black flex items-center justify-center p-0 hover:bg-white/10 transition-all">
                         <Plus className="h-5 w-5 text-muted-foreground/40" />
