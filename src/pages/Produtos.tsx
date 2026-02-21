@@ -6,7 +6,7 @@ import { formatCurrency } from '@/lib/formatters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, ShoppingBag, Search, Tag } from 'lucide-react';
+import { Plus, Trash2, ShoppingBag, Search, Tag, Pencil } from 'lucide-react';
 
 interface Produto {
   id: string;
@@ -23,6 +23,7 @@ export default function Produtos() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', valor: '', custo: '' });
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const fetchProdutos = async () => {
     if (!user) return;
@@ -40,7 +41,7 @@ export default function Produtos() {
 
   useEffect(() => { fetchProdutos(); }, [user]);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
@@ -52,34 +53,52 @@ export default function Produtos() {
       return;
     }
 
-    // TODO: Reabilitar envio de 'custo' assim que o banco for migrado
     console.log("Produtos: Iniciando salvamento...", { nome: form.nome, valor: valorFloat, custo: custoFloat });
     
     try {
-      const { data, error } = await Promise.race([
-        supabase.from('produtos').insert({
+      let result;
+      if (editingId) {
+        result = await supabase.from('produtos').update({
+          nome: form.nome,
+          valor: valorFloat,
+          custo: custoFloat,
+        }).eq('id', editingId).select();
+      } else {
+        result = await supabase.from('produtos').insert({
           user_id: user.id,
           nome: form.nome,
           valor: valorFloat,
           custo: custoFloat,
-        }).select(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Tempo de resposta excedido ao salvar')), 10000))
-      ]) as any;
+        }).select();
+      }
+
+      const { data, error } = result;
 
       if (error) {
-        console.error('Erro ao criar produto:', error);
+        console.error('Erro ao salvar produto:', error);
         toast({ title: 'Erro', description: error.message, variant: 'destructive' });
       } else {
         console.log("Produtos: Salvo com sucesso!", data);
-        toast({ title: 'Produto cadastrado!' });
+        toast({ title: editingId ? 'Produto atualizado!' : 'Produto cadastrado!' });
         setForm({ nome: '', valor: '', custo: '' });
+        setEditingId(null);
         setOpen(false);
         fetchProdutos();
       }
     } catch (err: any) {
-      console.error('Exceção ao criar produto:', err);
+      console.error('Exceção ao salvar produto:', err);
       toast({ title: 'Erro de Conexão', description: err.message || 'O banco de dados não respondeu.', variant: 'destructive' });
     }
+  };
+
+  const handleEdit = (p: Produto) => {
+    setEditingId(p.id);
+    setForm({
+      nome: p.nome,
+      valor: p.valor.toString().replace('.', ','),
+      custo: p.custo ? p.custo.toString().replace('.', ',') : ''
+    });
+    setOpen(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -103,7 +122,13 @@ export default function Produtos() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Catálogo</h1>
           <p className="text-sm text-muted-foreground mt-1">Seus produtos e serviços cadastrados.</p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(v) => {
+          setOpen(v);
+          if (!v) {
+            setEditingId(null);
+            setForm({ nome: '', valor: '', custo: '' });
+          }
+        }}>
           <DialogTrigger asChild>
             <Button size="sm" className="gap-2 rounded-xl premium-gradient shadow-lg shadow-primary/20 h-10 px-4">
               <Plus className="h-4 w-4" /> Novo
@@ -111,9 +136,11 @@ export default function Produtos() {
           </DialogTrigger>
           <DialogContent className="w-[95vw] max-w-md rounded-3xl border-white/10 glass p-5 sm:p-7">
             <DialogHeader>
-              <DialogTitle className="text-xl font-black tracking-tighter">Novo Produto/Serviço</DialogTitle>
+              <DialogTitle className="text-xl font-black tracking-tighter">
+                {editingId ? 'Editar Produto/Serviço' : 'Novo Produto/Serviço'}
+              </DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4 pt-3">
+            <form onSubmit={handleSubmit} className="space-y-4 pt-3">
               <div className="space-y-2">
                 <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60 px-1">Identificação</p>
                 <Input 
@@ -147,7 +174,9 @@ export default function Produtos() {
                   />
                 </div>
               </div>
-              <Button type="submit" className="w-full rounded-xl premium-gradient h-12 text-sm font-bold mt-1">Salvar no Catálogo</Button>
+              <Button type="submit" className="w-full rounded-xl premium-gradient h-12 text-sm font-bold mt-1">
+                {editingId ? 'Atualizar no Catálogo' : 'Salvar no Catálogo'}
+              </Button>
             </form>
           </DialogContent>
         </Dialog>
@@ -184,12 +213,22 @@ export default function Produtos() {
                 </div>
               </div>
             </div>
-            <button 
-              onClick={() => handleDelete(produto.id)} 
-              className="p-2.5 rounded-xl text-muted-foreground/30 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
-            >
-              <Trash2 className="h-5 w-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => handleEdit(produto)} 
+                className="p-2.5 rounded-xl text-muted-foreground/30 hover:text-primary hover:bg-primary/10 transition-colors"
+                title="Editar"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
+              <button 
+                onClick={() => handleDelete(produto.id)} 
+                className="p-2.5 rounded-xl text-muted-foreground/30 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                title="Excluir"
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         ))}
       </div>

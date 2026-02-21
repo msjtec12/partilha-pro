@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User, CheckCircle, Pencil } from 'lucide-react';
 import { exportToPDF } from '@/lib/pdfExport';
 
 interface Encomenda {
@@ -31,6 +31,7 @@ export default function Encomendas() {
   const [form, setForm] = useState({ cliente: '', descricao: '', valor: '', custo: '' });
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [catalog, setCatalog] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
 
@@ -71,11 +72,11 @@ export default function Encomendas() {
     fetchClients();
   }, [user]);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     
-    if (limitReached) {
+    if (!editingId && limitReached) {
       toast({ title: "Limite atingido!", description: "Usuários do plano Free podem ter até 10 encomendas. Faça upgrade para o Pro!", variant: "destructive" });
       return;
     }
@@ -91,32 +92,53 @@ export default function Encomendas() {
     console.log("Pedidos: Iniciando salvamento...", { cliente: form.cliente, valor: valorFloat });
     
     try {
-      const { data: insertedData, error } = await Promise.race([
-        supabase.from('pedidos').insert({
+      let result;
+      if (editingId) {
+        result = await supabase.from('pedidos').update({
+          cliente: form.cliente,
+          descricao: form.descricao,
+          valor: valorFloat,
+          custo: custoFloat
+        }).eq('id', editingId).select();
+      } else {
+        result = await supabase.from('pedidos').insert({
           user_id: user.id,
           cliente: form.cliente,
           descricao: form.descricao,
           valor: valorFloat,
           custo: custoFloat,
           status: 'Pendente'
-        }).select(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Tempo de resposta excedido ao salvar')), 10000))
-      ]) as any;
+        }).select();
+      }
+
+      const { data: insertedData, error } = result;
 
       if (error) {
-        console.error('Erro ao criar pedido:', error);
+        console.error('Erro ao salvar pedido:', error);
         toast({ title: 'Erro ao salvar', description: error.message || 'Verifique seus dados.', variant: 'destructive' });
       } else {
         console.log("Pedidos: Salvo com sucesso!", insertedData);
-        toast({ title: 'Encomenda criada com sucesso!' });
+        toast({ title: editingId ? 'Encomenda atualizada!' : 'Encomenda criada!' });
         setForm({ cliente: '', descricao: '', valor: '', custo: '' });
+        setEditingId(null);
         setOpen(false);
         fetchEncomendas();
       }
     } catch (err: any) {
-      console.error('Exceção ao criar pedido:', err);
+      console.error('Exceção ao salvar pedido:', err);
       toast({ title: 'Erro de Conexão', description: err.message || 'O banco de dados não respondeu.', variant: 'destructive' });
     }
+  };
+
+  const handleEdit = (enc: Encomenda) => {
+    setEditingId(enc.id);
+    setForm({
+      cliente: enc.cliente,
+      descricao: enc.descricao,
+      valor: enc.valor.toString().replace('.', ','),
+      custo: enc.custo ? enc.custo.toString().replace('.', ',') : ''
+    });
+    setOpen(true);
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
@@ -167,7 +189,13 @@ export default function Encomendas() {
               <Download className="h-5 w-5" />
             </Button>
           )}
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(v) => {
+            setOpen(v);
+            if (!v) {
+              setEditingId(null);
+              setForm({ cliente: '', descricao: '', valor: '', custo: '' });
+            }
+          }}>
             <DialogTrigger asChild>
               <Button size="sm" className="h-11 px-5 gap-2 rounded-full premium-gradient shadow-xl shadow-primary/30 font-black uppercase tracking-tighter text-xs" disabled={limitReached}>
                 <Plus className="h-4 w-4" /> Nova
@@ -175,7 +203,9 @@ export default function Encomendas() {
             </DialogTrigger>
             <DialogContent className="w-[95vw] max-w-lg rounded-3xl border-white/10 glass p-5 sm:p-8">
               <DialogHeader className="mb-4">
-                <DialogTitle className="text-2xl sm:text-3xl font-black tracking-tighter">Iniciando Arte</DialogTitle>
+                <DialogTitle className="text-2xl sm:text-3xl font-black tracking-tighter">
+                  {editingId ? 'Ajustando Arte' : 'Iniciando Arte'}
+                </DialogTitle>
               </DialogHeader>
 
               {/* Catalog quick-select chips — horizontal scroll */}
@@ -216,7 +246,7 @@ export default function Encomendas() {
                 </div>
               )}
 
-              <form onSubmit={handleCreate} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <Input
                   placeholder="Artesão / Cliente"
                   value={form.cliente}
@@ -249,7 +279,7 @@ export default function Encomendas() {
                   />
                 </div>
                 <Button type="submit" className="w-full rounded-full premium-gradient h-13 text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/30 mt-1">
-                  Salvar no Livro
+                  {editingId ? 'Atualizar no Livro' : 'Salvar no Livro'}
                 </Button>
               </form>
             </DialogContent>
@@ -355,8 +385,16 @@ export default function Encomendas() {
                         <CheckCircle className="h-4 w-4" /> Finalizar
                       </Button>
                     )}
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      className="h-12 w-12 rounded-2xl bg-white/5 text-muted-foreground/40 hover:text-primary hover:bg-white/10 transition-all p-0 flex items-center justify-center border border-white/5"
+                      onClick={() => handleEdit(enc)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Select value={enc.status} onValueChange={(v) => handleStatusChange(enc.id, v)}>
-                      <SelectTrigger className="h-12 w-12 rounded-2xl bg-white/5 border-white/5 font-black flex items-center justify-center p-0 hover:bg-white/10 transition-all">
+                      <SelectTrigger className="h-12 w-12 rounded-2xl bg-white/5 border-white/5 font-black flex items-center justify-center p-0 hover:bg-white/10 transition-all shadow-none ring-0 focus:ring-0">
                         <Plus className="h-5 w-5 text-muted-foreground/40" />
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl glass border-white/10 p-2">
