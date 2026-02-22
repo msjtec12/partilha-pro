@@ -41,6 +41,12 @@
 
     --glass-background: rgba(255, 255, 255, 0.5);
     --glass-border: rgba(210, 105, 30, 0.08);
+
+    --status-pendente: 25 10% 60%;
+    --status-fazer: 22 70% 45%;
+    --status-entregar: 35 90% 45%;
+    --status-entregue: 142 45% 40%;
+    --status-recebido: 142 45% 30%;
   }
 
   .dark {
@@ -71,6 +77,12 @@
 
     --glass-background: rgba(18, 14, 12, 0.8);
     --glass-border: rgba(226, 114, 91, 0.05);
+
+    --status-pendente: 30 15% 40%;
+    --status-fazer: 22 75% 55%;
+    --status-entregar: 35 80% 50%;
+    --status-entregue: 142 45% 45%;
+    --status-recebido: 142 50% 40%;
   }
 }
 

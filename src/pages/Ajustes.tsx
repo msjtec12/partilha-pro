@@ -120,34 +120,34 @@ export default function Ajustes() {
 
 
   return (
-    <div className="space-y-8 md:space-y-12 animate-fade-in max-w-4xl mx-auto px-2 md:px-0 pb-20 md:pb-0">
+    <div className="space-y-6 md:space-y-12 animate-fade-in max-w-4xl mx-auto px-4 md:px-0 pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-none">Ajustes</h1>
-          <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Configurações & Gestão</p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-tight md:leading-none">Ajustes</h1>
+          <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-2 md:mt-4 italic">Configurações & Gestão</p>
         </div>
         {plan === 'pro' && (
-          <span className="flex items-center gap-2 px-5 py-2 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest border border-amber-500/20 shadow-2xl animate-bounce-slow self-start md:self-auto">
+          <span className="flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 text-amber-500 text-[9px] font-black uppercase tracking-widest border border-amber-500/20 shadow-2xl animate-bounce-slow self-start md:self-auto">
             <Crown className="h-4 w-4 fill-amber-500/20" /> PLANO BUSINESS
           </span>
         )}
       </div>
 
-      <div className="glass p-10 rounded-[3.5rem] border-white/5 relative overflow-hidden bg-white/[0.01] shadow-2xl">
+      <div className="glass p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] border-white/5 relative overflow-hidden bg-white/[0.01] shadow-2xl">
         <div className="absolute top-0 right-0 p-12 -mr-16 -mt-16 bg-primary/5 rounded-full blur-[100px]" />
-        <div className="flex items-center gap-6 relative z-10">
-          <div className="flex h-20 w-20 items-center justify-center rounded-[2rem] bg-white shadow-2xl border border-white/10 group overflow-hidden">
-            <img src="/logo.png" alt="Logo" className="h-12 object-contain transition-transform group-hover:scale-110" />
+        <div className="flex items-center gap-4 md:gap-6 relative z-10">
+          <div className="flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-[1.5rem] md:rounded-[2rem] bg-white shadow-2xl border border-white/10 group overflow-hidden">
+            <img src="/logo.png" alt="Logo" className="h-10 md:h-12 object-contain transition-transform group-hover:scale-110" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-2xl font-black tracking-tight text-foreground uppercase">
+            <h2 className="text-xl md:text-2xl font-black tracking-tight text-foreground uppercase">
               {workshopName}
             </h2>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-0.5">
               {fullName && (
-                <p className="text-xs font-black text-muted-foreground/60 uppercase tracking-widest italic">{fullName}</p>
+                <p className="text-[10px] md:text-xs font-black text-muted-foreground/60 uppercase tracking-widest italic">{fullName}</p>
               )}
-              <p className="text-[10px] font-black text-primary/40 uppercase tracking-widest">{user?.email}</p>
+              <p className="text-[8px] md:text-[10px] font-black text-primary/40 uppercase tracking-widest">{user?.email}</p>
             </div>
           </div>
         </div>
@@ -210,60 +210,60 @@ export default function Ajustes() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className={cn("glass p-10 rounded-[3.5rem] border-white/5 transition-all relative group bg-white/[0.01]", plan === 'free' ? 'ring-2 ring-primary/20 bg-primary/[0.02]' : '')}>
-            <div className="flex justify-between items-start mb-10">
+          <div className={cn("glass p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] border-white/5 transition-all relative group bg-white/[0.01]", plan === 'free' ? 'ring-2 ring-primary/20 bg-primary/[0.02]' : '')}>
+            <div className="flex justify-between items-start mb-8 md:mb-10">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2 italic">Essencial</p>
-                <h3 className="text-2xl font-black text-foreground tracking-tighter uppercase">STARTUP</h3>
+                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2 italic">Essencial</p>
+                <h3 className="text-xl md:text-2xl font-black text-foreground tracking-tighter uppercase">STARTUP</h3>
               </div>
-              {plan === 'free' && <CheckCircle2 className="h-6 w-6 text-primary shadow-xl" />}
+              {plan === 'free' && <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-primary shadow-xl" />}
             </div>
-            <p className="text-4xl font-black text-foreground mb-8 tracking-tighter">Grátis</p>
-            <ul className="space-y-4 mb-10">
-              <li className="flex items-center gap-3 text-[11px] font-bold text-muted-foreground/70 uppercase tracking-tight">
+            <p className="text-3xl md:text-4xl font-black text-foreground mb-6 md:mb-8 tracking-tighter">Grátis</p>
+            <ul className="space-y-3 md:space-y-4 mb-8 md:mb-10">
+              <li className="flex items-center gap-3 text-[10px] md:text-[11px] font-bold text-muted-foreground/70 uppercase tracking-tight">
                 <CheckCircle2 className="h-4 w-4 text-primary/30" /> 10 encomendas / mês
               </li>
-              <li className="flex items-center gap-3 text-[11px] font-bold text-muted-foreground/70 uppercase tracking-tight">
+              <li className="flex items-center gap-3 text-[10px] md:text-[11px] font-bold text-muted-foreground/70 uppercase tracking-tight">
                 <CheckCircle2 className="h-4 w-4 text-primary/30" /> Fluxo de caixa
               </li>
             </ul>
-            {plan !== 'free' && <Button variant="outline" className="w-full h-14 rounded-full font-black uppercase tracking-widest text-[10px] border-white/5" onClick={() => handleUpdatePlan('free')}>MIGRAR</Button>}
+            {plan !== 'free' && <Button variant="outline" className="w-full h-12 md:h-14 rounded-full font-black uppercase tracking-widest text-[10px] border-white/5" onClick={() => handleUpdatePlan('free')}>MIGRAR</Button>}
           </div>
-
-          <div className={cn("glass p-10 rounded-[3.5rem] border-white/5 transition-all relative overflow-hidden group bg-white/[0.01] shadow-2xl", plan === 'pro' ? 'ring-4 ring-amber-500/20 bg-amber-500/[0.03]' : '')}>
+ 
+          <div className={cn("glass p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] border-white/5 transition-all relative overflow-hidden group bg-white/[0.01] shadow-2xl", plan === 'pro' ? 'ring-4 ring-amber-500/20 bg-amber-500/[0.03]' : '')}>
             <div className="absolute top-0 right-0 p-12 -mr-12 -mt-12 bg-amber-500/10 rounded-full blur-[100px] group-hover:bg-amber-500/20 transition-all duration-1000" />
             
-            <div className="flex justify-between items-start mb-10 relative z-10">
+            <div className="flex justify-between items-start mb-8 md:mb-10 relative z-10">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-amber-500/60 mb-2 italic">Profissional</p>
-                <div className="flex items-center gap-3">
-                  <h3 className="text-2xl font-black text-foreground tracking-tighter uppercase">BUSINESS</h3>
-                  <span className="px-3 py-1 rounded-full bg-amber-500 text-[8px] font-black text-white uppercase tracking-widest shadow-lg">PRO</span>
+                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-amber-500/60 mb-2 italic">Profissional</p>
+                <div className="flex items-center gap-2 md:gap-3">
+                  <h3 className="text-xl md:text-2xl font-black text-foreground tracking-tighter uppercase">BUSINESS</h3>
+                  <span className="px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-amber-500 text-[7px] md:text-[8px] font-black text-white uppercase tracking-widest shadow-lg">PRO</span>
                 </div>
               </div>
-              {plan === 'pro' && <CheckCircle2 className="h-6 w-6 text-amber-500 shadow-xl shadow-amber-500/20" />}
+              {plan === 'pro' && <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-amber-500 shadow-xl shadow-amber-500/20" />}
             </div>
-            <div className="flex items-baseline gap-2 mb-8 relative z-10">
-              <p className="text-5xl font-black text-foreground tracking-tighter">
+            <div className="flex items-baseline gap-2 mb-6 md:mb-8 relative z-10">
+              <p className="text-4xl md:text-5xl font-black text-foreground tracking-tighter">
                 {billingCycle === 'monthly' ? 'R$ 49,90' : 'R$ 399,90'}
               </p>
-              <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-widest">
+              <span className="text-[10px] md:text-xs font-black text-muted-foreground/40 uppercase tracking-widest">
                 {billingCycle === 'monthly' ? '/mês' : '/ano'}
               </span>
             </div>
-            <ul className="space-y-4 mb-10 relative z-10">
-              <li className="flex items-center gap-3 text-[11px] font-bold text-foreground uppercase tracking-tight">
+            <ul className="space-y-3 md:space-y-4 mb-8 md:mb-10 relative z-10">
+              <li className="flex items-center gap-3 text-[10px] md:text-[11px] font-bold text-foreground uppercase tracking-tight">
                 <Crown className="h-4 w-4 text-amber-500" /> ENCOMENDAS ILIMITADAS
               </li>
-              <li className="flex items-center gap-3 text-[11px] font-bold text-foreground uppercase tracking-tight">
-                <Crown className="h-4 w-4 text-amber-500" /> GESTÃO DE COLABORADORES
+              <li className="flex items-center gap-3 text-[10px] md:text-[11px] font-bold text-foreground uppercase tracking-tight">
+                <Crown className="h-4 w-4 text-amber-500" /> GESTÃO DE EQUIPE
               </li>
-              <li className="flex items-center gap-3 text-[11px] font-bold text-foreground uppercase tracking-tight">
+              <li className="flex items-center gap-3 text-[10px] md:text-[11px] font-bold text-foreground uppercase tracking-tight">
                 <Crown className="h-4 w-4 text-amber-500" /> EXPORTAÇÃO PDF PREMIUM
               </li>
             </ul>
             {plan !== 'pro' && (
-              <Button className="w-full gap-3 rounded-full h-16 font-black uppercase tracking-tighter text-xs premium-gradient shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all relative z-10" onClick={() => handleUpdatePlan('pro')}>
+              <Button className="w-full gap-2 md:gap-3 rounded-full h-14 md:h-16 font-black uppercase tracking-tighter text-[10px] md:text-xs premium-gradient shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all relative z-10" onClick={() => handleUpdatePlan('pro')}>
                 ASSINAR BUSINESS <ArrowRight className="h-4 w-4" />
               </Button>
             )}

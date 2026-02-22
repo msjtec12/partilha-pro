@@ -116,11 +116,11 @@ export default function Produtos() {
   );
 
   return (
-    <div className="space-y-6 p-4 pb-24">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 md:space-y-8 p-4 md:p-8 pb-24">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Catálogo</h1>
-          <p className="text-sm text-muted-foreground mt-1">Seus produtos e serviços cadastrados.</p>
+          <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-foreground leading-tight">Catálogo</h1>
+          <p className="text-[10px] md:text-sm text-muted-foreground font-bold uppercase tracking-widest mt-1">Seus produtos e serviços cadastrados.</p>
         </div>
         <Dialog open={open} onOpenChange={(v) => {
           setOpen(v);
@@ -130,8 +130,8 @@ export default function Produtos() {
           }
         }}>
           <DialogTrigger asChild>
-            <Button size="sm" className="gap-2 rounded-xl premium-gradient shadow-lg shadow-primary/20 h-10 px-4">
-              <Plus className="h-4 w-4" /> Novo
+            <Button size="lg" className="w-full md:w-auto gap-3 rounded-2xl premium-gradient shadow-xl shadow-primary/20 h-14 px-8 font-black uppercase tracking-tighter text-xs">
+              <Plus className="h-5 w-5" /> NOVO ITEM
             </Button>
           </DialogTrigger>
           <DialogContent className="w-[95vw] max-w-md rounded-3xl border-white/10 glass p-5 sm:p-7">
@@ -192,38 +192,38 @@ export default function Produtos() {
         <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground/50" />
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredProdutos.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center glass rounded-[2rem] border-dashed border-2 border-white/10">
+          <div className="col-span-full flex flex-col items-center justify-center py-20 text-center glass rounded-[2.5rem] border-dashed border-2 border-white/10">
             <ShoppingBag className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="text-sm font-medium text-muted-foreground">Catálogo vazio.<br/>Adicione seu primeiro produto!</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Catálogo vazio.<br/>Adicione seu primeiro produto!</p>
           </div>
         )}
         {filteredProdutos.map(produto => (
-          <div key={produto.id} className="glass p-5 rounded-[2rem] border-white/5 flex items-center justify-between group animate-fade-in hover:scale-[1.01] transition-all">
+          <div key={produto.id} className="glass p-6 rounded-[2rem] border-white/5 flex items-center justify-between group animate-fade-in hover:scale-[1.02] transition-all bg-white/[0.01]">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                <Tag className="h-6 w-6" />
+              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                <Tag className="h-7 w-7" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-foreground leading-tight">{produto.nome}</h3>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className="text-xs font-bold text-success">{formatCurrency(Number(produto.valor))}</span>
-                  <span className="text-[10px] text-muted-foreground">Custo: {formatCurrency(Number(produto.custo))}</span>
+                <h3 className="text-lg font-black text-foreground tracking-tight leading-tight">{produto.nome}</h3>
+                <div className="flex items-center gap-3 mt-1.5">
+                  <span className="text-sm font-black text-success">{formatCurrency(Number(produto.valor))}</span>
+                  <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest leading-none">Custo: {formatCurrency(Number(produto.custo))}</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <button 
                 onClick={() => handleEdit(produto)} 
-                className="p-2.5 rounded-xl text-muted-foreground/30 hover:text-primary hover:bg-primary/10 transition-colors"
+                className="p-3 rounded-xl text-muted-foreground/30 hover:text-primary hover:bg-primary/10 transition-all"
                 title="Editar"
               >
                 <Pencil className="h-4 w-4" />
               </button>
               <button 
                 onClick={() => handleDelete(produto.id)} 
-                className="p-2.5 rounded-xl text-muted-foreground/30 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                className="p-3 rounded-xl text-muted-foreground/30 hover:text-rose-500 hover:bg-rose-500/10 transition-all"
                 title="Excluir"
               >
                 <Trash2 className="h-5 w-5" />

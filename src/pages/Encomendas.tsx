@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User, CheckCircle, Pencil } from 'lucide-react';
+import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User, CheckCircle, Pencil, Settings } from 'lucide-react';
 import { exportToPDF } from '@/lib/pdfExport';
 
 interface Encomenda {
@@ -49,27 +49,11 @@ export default function Encomendas() {
   };
 
   useEffect(() => { 
-    fetchEncomendas(); 
-    fetchCatalog();
-    fetchClients();
-  }, [user]);
-
-  const fetchCatalog = async () => {
-    if (!user) return;
-    const { data } = await supabase.from('produtos').select('*').order('nome');
-    setCatalog(data ?? []);
-  };
-
-  const fetchClients = async () => {
-    if (!user) return;
-    const { data } = await supabase.from('clientes').select('*').order('nome');
-    setClients(data ?? []);
-  };
-
-  useEffect(() => { 
-    fetchEncomendas(); 
-    fetchCatalog();
-    fetchClients();
+    if (user) {
+      fetchEncomendas(); 
+      fetchCatalog();
+      fetchClients();
+    }
   }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -130,6 +114,18 @@ export default function Encomendas() {
     }
   };
 
+  const fetchCatalog = async () => {
+    if (!user) return;
+    const { data } = await supabase.from('produtos').select('*').order('nome');
+    setCatalog(data ?? []);
+  };
+
+  const fetchClients = async () => {
+    if (!user) return;
+    const { data } = await supabase.from('clientes').select('*').order('nome');
+    setClients(data ?? []);
+  };
+
   const handleEdit = (enc: Encomenda) => {
     setEditingId(enc.id);
     setForm({
@@ -170,11 +166,11 @@ export default function Encomendas() {
   });
 
   return (
-    <div className="space-y-8 md:space-y-12 animate-fade-in max-w-6xl mx-auto px-2 md:px-0 pb-24 md:pb-0">
+    <div className="space-y-6 md:space-y-12 animate-fade-in max-w-6xl mx-auto px-4 md:px-0 pb-24 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-none">Encomendas</h1>
-          <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Gestão de Produção Artisanal</p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-tight md:leading-none">Encomendas</h1>
+          <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-2 md:mt-4 italic">Gestão de Produção Artisanal</p>
         </div>
         <div className="flex items-center gap-4">
           {plan === 'pro' && (
@@ -298,7 +294,7 @@ export default function Encomendas() {
           <Clock className="absolute left-6 top-6 h-5 w-5 text-primary/40 group-hover:text-primary transition-colors" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full md:w-56 rounded-[2rem] bg-white/5 border-white/5 h-16 px-8 font-black uppercase tracking-widest text-[10px]">
+          <SelectTrigger className="w-full md:w-56 rounded-[1.5rem] md:rounded-[2rem] bg-white/5 border-white/5 h-12 md:h-16 px-6 md:px-8 font-black uppercase tracking-widest text-[9px] md:text-[10px]">
              <SelectValue placeholder="STATUS" />
           </SelectTrigger>
           <SelectContent className="rounded-[2rem] glass border-white/10 p-2">
@@ -339,7 +335,7 @@ export default function Encomendas() {
         {filteredEncomendas.map(enc => {
           const late = plan === 'pro' && isLate(enc.created_at) && !['Entregue', 'Recebido'].includes(enc.status);
           return (
-            <div key={enc.id} className="relative glass p-10 rounded-[3.5rem] animate-fade-in transition-all hover:translate-y-[-8px] border-white/5 bg-white/[0.01] shadow-2xl group">
+            <div key={enc.id} className="relative glass p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] animate-fade-in transition-all hover:translate-y-[-8px] border-white/5 bg-white/[0.01] shadow-2xl group">
               {late && (
                 <div className="absolute top-8 right-8 flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 text-rose-500 text-[9px] font-black uppercase tracking-widest animate-pulse border border-rose-500/20 shadow-lg">
                   <AlertCircle className="h-3 w-3" />
@@ -354,18 +350,18 @@ export default function Encomendas() {
                    <p className="text-base font-bold text-muted-foreground/60 tracking-tight mt-2">{enc.descricao}</p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/5">
+                <div className="grid grid-cols-3 gap-2 md:gap-6 pt-6 md:pt-8 border-t border-white/5">
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-2">Venda</span>
-                    <span className="text-xl font-black text-success tracking-tighter">{formatCurrency(Number(enc.valor))}</span>
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1 md:mb-2">Venda</span>
+                    <span className="text-lg md:text-xl font-black text-success tracking-tighter">{formatCurrency(Number(enc.valor))}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-2">Custo</span>
-                    <span className="text-xl font-black text-rose-500/80 tracking-tighter">{formatCurrency(Number(enc.custo || 0))}</span>
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1 md:mb-2">Custo</span>
+                    <span className="text-lg md:text-xl font-black text-rose-500/80 tracking-tighter">{formatCurrency(Number(enc.custo || 0))}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-2">Lucro</span>
-                    <span className="text-xl font-black text-primary tracking-tighter">{formatCurrency(Number(enc.valor) - Number(enc.custo || 0))}</span>
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1 md:mb-2">Lucro</span>
+                    <span className="text-lg md:text-xl font-black text-primary tracking-tighter">{formatCurrency(Number(enc.valor) - Number(enc.custo || 0))}</span>
                   </div>
                 </div>
 
@@ -385,17 +381,10 @@ export default function Encomendas() {
                         <CheckCircle className="h-4 w-4" /> Finalizar
                       </Button>
                     )}
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="h-12 w-12 rounded-2xl bg-white/5 text-muted-foreground/40 hover:text-primary hover:bg-white/10 transition-all p-0 flex items-center justify-center border border-white/5"
-                      onClick={() => handleEdit(enc)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                  <div className="flex items-center gap-2 md:gap-3">
                     <Select value={enc.status} onValueChange={(v) => handleStatusChange(enc.id, v)}>
-                      <SelectTrigger className="h-12 w-12 rounded-2xl bg-white/5 border-white/5 font-black flex items-center justify-center p-0 hover:bg-white/10 transition-all shadow-none ring-0 focus:ring-0">
-                        <Plus className="h-5 w-5 text-muted-foreground/40" />
+                      <SelectTrigger className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-white/5 border-white/5 font-black flex items-center justify-center p-0 hover:bg-white/10 transition-all shadow-none ring-0 focus:ring-0">
+                        <Settings className="h-4 w-4 text-muted-foreground/40" />
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl glass border-white/10 p-2">
                         {statusList.map(s => (
@@ -403,9 +392,20 @@ export default function Encomendas() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <button onClick={() => handleDelete(enc.id)} className="h-12 w-12 rounded-2xl bg-rose-500/5 text-rose-500/40 hover:text-rose-500 hover:bg-rose-500/10 transition-all flex items-center justify-center border border-rose-500/5">
-                      <Trash2 className="h-5 w-5" />
+                    
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-white/5 text-muted-foreground/40 hover:text-primary hover:bg-white/10 transition-all p-0 flex items-center justify-center border border-white/5"
+                      onClick={() => handleEdit(enc)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+
+                    <button onClick={() => handleDelete(enc.id)} className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-rose-500/5 text-rose-500/40 hover:text-rose-500 hover:bg-rose-500/10 transition-all flex items-center justify-center border border-rose-500/5">
+                      <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                     </button>
+                  </div>
                   </div>
                 </div>
               </div>

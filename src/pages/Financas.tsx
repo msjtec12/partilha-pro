@@ -106,14 +106,18 @@ export default function Financas() {
     e.preventDefault();
     if (!user) return;
     
-    console.log("Financeiro: Iniciando salvamento de despesa...", form);
-    
+    const valorFloat = parseFloat(form.valor.replace(',', '.'));
+    if (isNaN(valorFloat)) {
+      toast({ title: 'Valor inválido', description: 'Por favor, insira um valor numérico válido.', variant: 'destructive' });
+      return;
+    }
+
     try {
       const { error } = await Promise.race([
         supabase.from('despesas').insert({
           user_id: user.id,
           descricao: form.descricao,
-          valor: parseFloat(form.valor.replace(',', '.')),
+          valor: valorFloat,
           categoria: form.categoria,
         }),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Tempo de resposta excedido ao salvar')), 10000))
@@ -194,12 +198,12 @@ export default function Financas() {
   };
 
   return (
-    <div className="space-y-12 md:space-y-16 animate-fade-in max-w-5xl mx-auto px-2 md:px-0 pb-24 md:pb-0">
+    <div className="space-y-8 md:space-y-16 animate-fade-in max-w-5xl mx-auto px-4 md:px-0 pb-24 md:pb-0">
       <div className="space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-none">Despesas</h1>
-            <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Controle de Insumos & Operação</p>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-tight md:leading-none">Despesas</h1>
+            <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-2 md:mt-4 italic">Controle de Insumos & Operação</p>
           </div>
           <div className="flex items-center gap-4">
             {plan === 'pro' && (
@@ -243,37 +247,37 @@ export default function Financas() {
         </div>
 
         {/* Resumo Financeiro do Mês */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 animate-slide-up">
-          <div className="glass p-6 md:p-8 rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 animate-slide-up">
+          <div className="glass p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
             <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-emerald-500/5 rounded-full blur-2xl" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-3 leading-none flex items-center gap-2">
-              <TrendingUp className="h-3 w-3 text-emerald-500" /> Faturamento (Mês)
+            <p className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-2 md:mb-3 leading-none flex items-center gap-1 md:gap-2">
+              <TrendingUp className="h-2 w-2 md:h-3 md:w-3 text-emerald-500" /> Faturamento
             </p>
-            <h3 className="text-2xl md:text-3xl font-black text-emerald-500 tracking-tighter">{formatCurrency(summary.faturamento)}</h3>
+            <h3 className="text-xl md:text-3xl font-black text-emerald-500 tracking-tighter">{formatCurrency(summary.faturamento)}</h3>
           </div>
           
-          <div className="glass p-6 md:p-8 rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
+          <div className="glass p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
             <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-rose-500/5 rounded-full blur-2xl" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-3 leading-none flex items-center gap-2">
-              <TrendingDown className="h-3 w-3 text-rose-500" /> Custo Produção
+            <p className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-2 md:mb-3 leading-none flex items-center gap-1 md:gap-2">
+              <TrendingDown className="h-2 w-2 md:h-3 md:w-3 text-rose-500" /> Custo Unit.
             </p>
-            <h3 className="text-2xl md:text-3xl font-black text-rose-500/80 tracking-tighter">{formatCurrency(summary.custos)}</h3>
+            <h3 className="text-xl md:text-3xl font-black text-rose-500/80 tracking-tighter">{formatCurrency(summary.custos)}</h3>
           </div>
-
-          <div className="glass p-6 md:p-8 rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
+ 
+          <div className="glass p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/[0.02] relative group overflow-hidden">
             <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-amber-500/5 rounded-full blur-2xl" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-3 leading-none flex items-center gap-2">
-              <PieChart className="h-3 w-3 text-amber-500" /> Despesas Operac.
+            <p className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-2 md:mb-3 leading-none flex items-center gap-1 md:gap-2">
+              <PieChart className="h-2 w-2 md:h-3 md:w-3 text-amber-500" /> Desp. Op.
             </p>
-            <h3 className="text-2xl md:text-3xl font-black text-amber-500/80 tracking-tighter">{formatCurrency(summary.despesas)}</h3>
+            <h3 className="text-xl md:text-3xl font-black text-amber-500/80 tracking-tighter">{formatCurrency(summary.despesas)}</h3>
           </div>
-
-          <div className="premium-gradient p-6 md:p-8 rounded-[2rem] shadow-xl shadow-primary/20 relative group overflow-hidden">
+ 
+          <div className="premium-gradient p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-xl shadow-primary/20 relative group overflow-hidden">
              <div className="absolute top-0 right-0 p-4 -mr-4 -mt-4 bg-white/10 rounded-full blur-2xl" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-white/60 mb-3 leading-none flex items-center gap-2">
-              <DollarSign className="h-3 w-3 text-white" /> Lucro Líquido
+            <p className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-white/60 mb-2 md:mb-3 leading-none flex items-center gap-1 md:gap-2">
+              <DollarSign className="h-2 w-2 md:h-3 md:w-3 text-white" /> Lucro Líq.
             </p>
-            <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter">{formatCurrency(summary.lucro)}</h3>
+            <h3 className="text-xl md:text-3xl font-black text-white tracking-tighter">{formatCurrency(summary.lucro)}</h3>
           </div>
         </div>
 
@@ -310,8 +314,8 @@ export default function Financas() {
       <div className="space-y-10 pt-16 border-t border-white/5">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-5xl font-black tracking-tighter text-foreground leading-none">Resultados</h1>
-            <p className="text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-4 italic">Apuração de Performance & Pró-labore</p>
+            <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-foreground leading-tight md:leading-none">Resultados</h1>
+            <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] mt-2 md:mt-4 italic">Apuração de Performance & Pró-labore</p>
           </div>
           <div className="flex items-center gap-4">
             {plan === 'pro' && (
@@ -337,31 +341,31 @@ export default function Financas() {
             </div>
           )}
           {fechamentos.map(f => (
-            <div key={f.id} className="glass p-10 rounded-[3.5rem] animate-fade-in border-white/5 relative overflow-hidden group bg-white/[0.01] shadow-2xl">
+            <div key={f.id} className="glass p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] animate-fade-in border-white/5 relative overflow-hidden group bg-white/[0.01] shadow-2xl">
               <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-[100px] -mr-20 -mt-20 group-hover:bg-primary/10 transition-all duration-1000" />
-              <div className="flex items-start justify-between relative z-10 mb-10">
+              <div className="flex items-start justify-between relative z-10 mb-8 md:mb-10">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mb-3 italic">Ciclo Artisanal</p>
-                  <p className="text-sm font-black text-muted-foreground/50 tracking-tight">{f.periodo}</p>
+                  <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mb-2 md:mb-3 italic">Ciclo Artisanal</p>
+                  <p className="text-xs md:text-sm font-black text-muted-foreground/50 tracking-tight">{f.periodo}</p>
                 </div>
-                <button onClick={() => handleShare(f)} className="h-12 w-12 rounded-2xl bg-white/5 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex items-center justify-center border border-white/5">
-                  <Share2 className="h-5 w-5" />
+                <button onClick={() => handleShare(f)} className="h-10 w-10 md:h-12 md:w-12 rounded-[1rem] md:rounded-2xl bg-white/5 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex items-center justify-center border border-white/5">
+                  <Share2 className="h-4 w-4 md:h-5 md:w-5" />
                 </button>
               </div>
               
-              <div className="mb-12 relative z-10">
-                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/30 mb-2">Resultado Líquido</p>
-                 <h2 className="text-6xl font-black tracking-tighter text-foreground leading-none">{formatCurrency(Number(f.lucro_total))}</h2>
+              <div className="mb-8 md:mb-12 relative z-10">
+                 <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/30 mb-2">Resultado Líquido</p>
+                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground leading-none">{formatCurrency(Number(f.lucro_total))}</h2>
               </div>
-
-              <div className="grid grid-cols-2 gap-6 relative z-10">
-                <div className="rounded-[2rem] bg-emerald-500/5 p-6 border border-emerald-500/10 group-hover:bg-emerald-500/10 transition-colors">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500/60 mb-3">Seu Ganho</p>
-                  <p className="text-xl font-black text-emerald-500 tracking-tight">{formatCurrency(Number(f.minha_parte))}</p>
+ 
+              <div className="grid grid-cols-2 gap-3 md:gap-6 relative z-10">
+                <div className="rounded-[1.5rem] md:rounded-[2rem] bg-emerald-500/5 p-4 md:p-6 border border-emerald-500/10 group-hover:bg-emerald-500/10 transition-colors">
+                  <p className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-emerald-500/60 mb-2 md:mb-3">Seu Ganho</p>
+                  <p className="text-lg md:text-xl font-black text-emerald-500 tracking-tight">{formatCurrency(Number(f.minha_parte))}</p>
                 </div>
-                <div className="rounded-[2rem] bg-orange-500/5 p-6 border border-orange-500/10 group-hover:bg-orange-500/10 transition-colors">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-orange-500/60 mb-3">Reinvestimento</p>
-                  <p className="text-xl font-black text-orange-500 tracking-tight">{formatCurrency(Number(f.parte_loja))}</p>
+                <div className="rounded-[1.5rem] md:rounded-[2rem] bg-orange-500/5 p-4 md:p-6 border border-orange-500/10 group-hover:bg-orange-500/10 transition-colors">
+                  <p className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-orange-500/60 mb-2 md:mb-3">Reserva</p>
+                  <p className="text-lg md:text-xl font-black text-orange-500 tracking-tight">{formatCurrency(Number(f.parte_loja))}</p>
                 </div>
               </div>
             </div>

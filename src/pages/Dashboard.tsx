@@ -86,12 +86,12 @@ export default function Dashboard() {
   const meuLucro = lucro * (proLaborePercent / 100);
 
   return (
-    <div className="space-y-8 md:space-y-12 animate-fade-in max-w-6xl mx-auto px-2 md:px-0">
+    <div className="space-y-6 md:space-y-12 animate-fade-in max-w-6xl mx-auto px-4 md:px-0">
       {/* Header matching mockup */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-none">Visão Geral</h1>
-          <div className="flex items-center gap-3 mt-4">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground leading-tight md:leading-none">Visão Geral</h1>
+          <div className="flex items-center gap-3 mt-2 md:mt-4">
             <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
             <p className="text-[10px] md:text-xs text-primary/70 font-black uppercase tracking-[0.3em] italic">{workshopName}</p>
           </div>
@@ -103,46 +103,46 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-6 md:mb-10">
         {/* Metric Card 1: Faturamento */}
-        <div className="glass p-8 rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
+        <div className="glass p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
           <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-          <div className="flex items-center justify-between mb-6 relative z-10">
-            <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-              <TrendingUp className="h-5 w-5" />
+          <div className="flex items-center justify-between mb-4 md:mb-6 relative z-10">
+            <div className="p-2.5 rounded-xl md:p-3 md:rounded-2xl bg-primary/10 text-primary">
+              <TrendingUp className="h-4 w-4 md:h-5 md:w-5" />
             </div>
           </div>
           <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Vendas (Mês)</p>
-            <h2 className="text-3xl font-black tracking-tighter text-foreground">{formatCurrency(totalEncomendas)}</h2>
+            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Vendas (Mês)</p>
+            <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground">{formatCurrency(totalEncomendas)}</h2>
           </div>
         </div>
-
+ 
         {/* Metric Card 2: Despesas */}
-        <div className="glass p-8 rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
+        <div className="glass p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
           <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-rose-500/5 rounded-full blur-3xl group-hover:bg-rose-500/10 transition-colors" />
-          <div className="flex items-center justify-between mb-6 relative z-10">
-            <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-500">
-              <DollarSign className="h-5 w-5" />
+          <div className="flex items-center justify-between mb-4 md:mb-6 relative z-10">
+            <div className="p-2.5 rounded-xl md:p-3 md:rounded-2xl bg-rose-500/10 text-rose-500">
+              <DollarSign className="h-4 w-4 md:h-5 md:w-5" />
             </div>
           </div>
           <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Despesas (Mês)</p>
-            <h2 className="text-3xl font-black tracking-tighter text-foreground">{formatCurrency(totalDespesas)}</h2>
+            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Despesas (Mês)</p>
+            <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground">{formatCurrency(totalDespesas)}</h2>
           </div>
         </div>
-
+ 
         {/* Metric Card 3: Lucro Líquido */}
-        <div className="glass p-8 rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
+        <div className="glass p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-white/5 relative group overflow-hidden shadow-2xl bg-white/[0.02]">
           <div className="absolute top-0 right-0 p-8 -mr-8 -mt-8 bg-emerald-500/5 rounded-full blur-3xl group-hover:bg-emerald-500/10 transition-colors" />
-          <div className="flex items-center justify-between mb-6 relative z-10">
-            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500">
-              <BarChart3 className="h-5 w-5" />
+          <div className="flex items-center justify-between mb-4 md:mb-6 relative z-10">
+            <div className="p-2.5 rounded-xl md:p-3 md:rounded-2xl bg-emerald-500/10 text-emerald-500">
+              <BarChart3 className="h-4 w-4 md:h-5 md:w-5" />
             </div>
           </div>
           <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Lucro Real</p>
-            <h2 className="text-3xl font-black tracking-tighter text-foreground">{formatCurrency(realProfit)}</h2>
+            <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 leading-none">Lucro Real</p>
+            <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground">{formatCurrency(realProfit)}</h2>
           </div>
         </div>
       </div>
