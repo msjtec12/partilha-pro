@@ -350,62 +350,62 @@ export default function Encomendas() {
                    <p className="text-base font-bold text-muted-foreground/60 tracking-tight mt-2">{enc.descricao}</p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 md:gap-6 pt-6 md:pt-8 border-t border-white/5">
+                <div className="grid grid-cols-3 gap-1 sm:gap-4 md:gap-6 pt-6 md:pt-8 border-t border-white/5">
                   <div className="flex flex-col">
                     <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1 md:mb-2">Venda</span>
-                    <span className="text-lg md:text-xl font-black text-success tracking-tighter">{formatCurrency(Number(enc.valor))}</span>
+                    <span className="text-base sm:text-lg md:text-xl font-black text-success tracking-tighter">{formatCurrency(Number(enc.valor))}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1 md:mb-2">Custo</span>
-                    <span className="text-lg md:text-xl font-black text-rose-500/80 tracking-tighter">{formatCurrency(Number(enc.custo || 0))}</span>
+                    <span className="text-base sm:text-lg md:text-xl font-black text-rose-500/80 tracking-tighter">{formatCurrency(Number(enc.custo || 0))}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1 md:mb-2">Lucro</span>
-                    <span className="text-lg md:text-xl font-black text-primary tracking-tighter">{formatCurrency(Number(enc.valor) - Number(enc.custo || 0))}</span>
+                    <span className="text-base sm:text-lg md:text-xl font-black text-primary tracking-tighter">{formatCurrency(Number(enc.valor) - Number(enc.custo || 0))}</span>
                   </div>
                 </div>
 
-                <div className="pt-8 flex items-center justify-between border-t border-white/5">
-                  <div className="flex items-center gap-6">
-                    <StatusBadge status={enc.status} className="scale-110" />
+                <div className="pt-8 flex flex-col xl:flex-row xl:items-center justify-between gap-6 border-t border-white/5">
+                  <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-6">
+                    <StatusBadge status={enc.status} className="scale-100 sm:scale-110" />
                     <span className="text-[9px] font-black tracking-[0.3em] uppercase text-muted-foreground/30">{formatDate(enc.created_at)}</span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full xl:w-auto">
                     {enc.status !== 'Recebido' && (
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        className="h-12 px-4 gap-2 rounded-2xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-black uppercase tracking-tighter text-[9px]"
+                        className="h-10 sm:h-12 px-3 sm:px-4 gap-2 rounded-xl sm:rounded-2xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-black uppercase tracking-tighter text-[8px] sm:text-[9px] flex-1 sm:flex-none"
                         onClick={() => handleStatusChange(enc.id, 'Recebido')}
                       >
                         <CheckCircle className="h-4 w-4" /> Finalizar
                       </Button>
                     )}
-                  <div className="flex items-center gap-2 md:gap-3">
-                    <Select value={enc.status} onValueChange={(v) => handleStatusChange(enc.id, v)}>
-                      <SelectTrigger className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-white/5 border-white/5 font-black flex items-center justify-center p-0 hover:bg-white/10 transition-all shadow-none ring-0 focus:ring-0">
-                        <Settings className="h-4 w-4 text-muted-foreground/40" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-2xl glass border-white/10 p-2">
-                        {statusList.map(s => (
-                          <SelectItem key={s} value={s} className="rounded-xl font-bold py-3 px-6 uppercase tracking-widest text-[9px]">{s}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-white/5 text-muted-foreground/40 hover:text-primary hover:bg-white/10 transition-all p-0 flex items-center justify-center border border-white/5"
-                      onClick={() => handleEdit(enc)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-2 md:gap-3">
+                      <Select value={enc.status} onValueChange={(v) => handleStatusChange(enc.id, v)}>
+                        <SelectTrigger className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-white/5 border-white/5 font-black flex items-center justify-center p-0 hover:bg-white/10 transition-all shadow-none ring-0 focus:ring-0">
+                          <Settings className="h-4 w-4 text-muted-foreground/40" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl glass border-white/10 p-2">
+                          {statusList.map(s => (
+                            <SelectItem key={s} value={s} className="rounded-xl font-bold py-3 px-6 uppercase tracking-widest text-[9px]">{s}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-white/5 text-muted-foreground/40 hover:text-primary hover:bg-white/10 transition-all p-0 flex items-center justify-center border border-white/5"
+                        onClick={() => handleEdit(enc)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
 
-                    <button onClick={() => handleDelete(enc.id)} className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-rose-500/5 text-rose-500/40 hover:text-rose-500 hover:bg-rose-500/10 transition-all flex items-center justify-center border border-rose-500/5">
-                      <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
-                    </button>
-                  </div>
+                      <button onClick={() => handleDelete(enc.id)} className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-rose-500/5 text-rose-500/40 hover:text-rose-500 hover:bg-rose-500/10 transition-all flex items-center justify-center border border-rose-500/5">
+                        <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
