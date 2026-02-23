@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User, CheckCircle, Pencil, Settings } from 'lucide-react';
+import { Plus, Trash2, Clock, AlertCircle, Download, ShoppingBag, User, CheckCircle, Pencil, Settings, Banknote, CreditCard, Smartphone } from 'lucide-react';
 import { exportToPDF } from '@/lib/pdfExport';
 
 interface Encomenda {
@@ -34,6 +34,8 @@ export default function Encomendas() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [catalog, setCatalog] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
+  const [completeDialogOpen, setCompleteDialogOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   const limitReached = plan === 'free' && encomendas.length >= 10;
 
@@ -143,6 +145,31 @@ export default function Encomendas() {
       toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: `Status atualizado para "${newStatus}"` });
+      fetchEncomendas();
+    }
+  };
+
+  const handleFinalize = async (method: string) => {
+    if (!selectedOrderId) return;
+    
+    // Atualiza o status para 'Recebido'. 
+    // Nota: Como a coluna 'metodo_pagamento' pode não existir no banco ainda, 
+    // estamos apenas salvando o status. Em uma implementação futura com a coluna, 
+    // poderíamos salvar o método também.
+    const { error } = await supabase.from('pedidos').update({ 
+      status: 'Recebido'
+    }).eq('id', selectedOrderId);
+    
+    if (error) {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ 
+        title: `Pedido Finalizado!`, 
+        description: `Recebimento confirmado via ${method}.`,
+        className: "bg-emerald-500 text-white font-bold"
+      });
+      setCompleteDialogOpen(false);
+      setSelectedOrderId(null);
       fetchEncomendas();
     }
   };
@@ -376,7 +403,10 @@ export default function Encomendas() {
                         size="sm" 
                         variant="ghost" 
                         className="h-10 sm:h-12 px-3 sm:px-4 gap-2 rounded-xl sm:rounded-2xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-black uppercase tracking-tighter text-[8px] sm:text-[9px] flex-1 sm:flex-none"
-                        onClick={() => handleStatusChange(enc.id, 'Recebido')}
+                        onClick={() => {
+                          setSelectedOrderId(enc.id);
+                          setCompleteDialogOpen(true);
+                        }}
                       >
                         <CheckCircle className="h-4 w-4" /> Finalizar
                       </Button>
@@ -413,6 +443,55 @@ export default function Encomendas() {
           );
         })}
       </div>
+
+      <Dialog open={completeDialogOpen} onOpenChange={setCompleteDialogOpen}>
+        <DialogContent className="w-[95vw] max-w-sm rounded-[2.5rem] border-white/10 glass p-8 shadow-2xl">
+          <DialogHeader className="mb-6">
+            <DialogTitle className="text-2xl font-black tracking-tighter text-center">Forma de Pagamento</DialogTitle>
+            <p className="text-center text-muted-foreground/60 text-[10px] font-black uppercase tracking-[0.2em] mt-2 italic">Como você recebeu?</p>
+          </DialogHeader>
+          <div className="grid grid-cols-1 gap-4">
+            <Button 
+              onClick={() => handleFinalize('Dinheiro')}
+              className="h-20 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/20 group transition-all justify-start px-6 gap-5 shadow-lg"
+            >
+              <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/10 transition-colors">
+                <Banknote className="h-6 w-6" />
+              </div>
+              <div className="text-left">
+                <p className="font-black uppercase tracking-[0.15em] text-[11px]">Dinheiro</p>
+                <p className="text-[9px] font-bold opacity-40 uppercase tracking-widest mt-1">Espécie / Físico</p>
+              </div>
+            </Button>
+            
+            <Button 
+              onClick={() => handleFinalize('PIX')}
+              className="h-20 rounded-2xl bg-white/5 border border-white/10 hover:bg-primary/10 hover:text-primary hover:border-primary/20 group transition-all justify-start px-6 gap-5 shadow-lg"
+            >
+              <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                <Smartphone className="h-6 w-6" />
+              </div>
+              <div className="text-left">
+                <p className="font-black uppercase tracking-[0.15em] text-[11px]">PIX</p>
+                <p className="text-[9px] font-bold opacity-40 uppercase tracking-widest mt-1">Transferência Instantânea</p>
+              </div>
+            </Button>
+
+            <Button 
+              onClick={() => handleFinalize('Cartão')}
+              className="h-20 rounded-2xl bg-white/5 border border-white/10 hover:bg-blue-500/10 hover:text-blue-500 hover:border-blue-500/20 group transition-all justify-start px-6 gap-5 shadow-lg"
+            >
+              <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-blue-500/10 transition-colors">
+                <CreditCard className="h-6 w-6" />
+              </div>
+              <div className="text-left">
+                <p className="font-black uppercase tracking-[0.15em] text-[11px]">Cartão</p>
+                <p className="text-[9px] font-bold opacity-40 uppercase tracking-widest mt-1">Crédito ou Débito</p>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
