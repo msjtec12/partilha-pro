@@ -228,62 +228,40 @@ export default function Dashboard() {
 
         {/* Right Chart Column */}
         <div className="space-y-10">
-           <div className="glass p-10 rounded-[3.5rem] border-white/5 shadow-2xl bg-white/[0.01]">
-            <div className="flex justify-between items-center mb-12">
-              <h3 className="text-xl font-black tracking-tighter">Segmentos</h3>
-              <div className="h-10 w-10 glass border-white/5 rounded-full flex items-center justify-center text-primary shadow-lg">
-                <TrendingUp className="h-4 w-4" />
-              </div>
-            </div>
-            
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={[
-                { name: 'Cerâmica', val: 4200 },
-                { name: 'Madeira', val: 3100 },
-                { name: 'Têxtil', val: 1800 },
-              ]}>
-                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                <XAxis dataKey="name" tick={{fontSize: 9, fontWeight: 900}} stroke="rgba(255,255,255,0.2)" axisLine={false} tickLine={false} dy={15} />
-                <Tooltip 
-                  cursor={{fill: 'rgba(255,255,255,0.02)'}}
-                  contentStyle={{background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '20px', backdropFilter: 'blur(10px)'}}
-                />
-                <Bar dataKey="val" radius={[10, 10, 10, 10]} barSize={35}>
-                  {[0, 1, 2].map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index === 0 ? 'hsl(var(--primary))' : index === 1 ? 'hsl(var(--primary)/0.6)' : 'hsl(var(--primary)/0.3)'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-
-            <div className="mt-12 space-y-4">
-              {[
-                { label: 'Cerâmica', color: 'bg-primary' },
-                { label: 'Madeira', color: 'bg-primary/60' },
-                { label: 'Têxtil', color: 'bg-primary/30' },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <div className="flex items-center gap-3">
-                    <div className={cn("h-3 w-3 rounded-full shadow-lg", item.color)} />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">{item.label}</span>
-                  </div>
-                  <span className="text-xs font-black opacity-40 italic">{Math.floor(Math.random() * 30 + 20)}%</span>
-                </div>
-              ))}
-            </div>
-           </div>
-
-           {/* Call to Action */}
-           <div className="glass p-10 rounded-[3.5rem] border-white/5 bg-primary/5 group cursor-pointer hover:bg-primary/10 transition-all shadow-2xl overflow-hidden relative">
-              <div className="absolute top-0 right-0 h-32 w-32 bg-primary/10 blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000" />
-              <div className="flex items-center gap-8 relative z-10">
-                <div className="h-16 w-16 glass rounded-[1.5rem] flex items-center justify-center text-primary shadow-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 border-white/5">
-                  <Landmark className="h-8 w-8" />
+           {/* Expanded Ateliê CTA - Replaces Segmentos */}
+           <div className="glass p-12 rounded-[3.5rem] border-white/5 bg-primary/5 group cursor-pointer hover:bg-primary/10 transition-all shadow-2xl overflow-hidden relative flex flex-col justify-between min-h-[600px]">
+              <div className="absolute top-0 right-0 h-64 w-64 bg-primary/10 blur-[100px] -mr-32 -mt-32 group-hover:scale-150 transition-transform duration-700" />
+              <div className="absolute bottom-0 left-0 h-64 w-64 bg-primary/5 blur-[100px] -ml-32 -mb-32 group-hover:scale-150 transition-transform duration-700" />
+              
+              <div className="relative z-10">
+                <div className="h-20 w-20 glass rounded-[2rem] flex items-center justify-center text-primary shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border-white/10 mb-10 bg-white/[0.03]">
+                  <Landmark className="h-10 w-10" />
                 </div>
                 <div>
-                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60 mb-2">Próximo Passo</p>
-                   <h4 className="text-2xl font-black tracking-tighter leading-none">Expandir Ateliê</h4>
+                   <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mb-4 italic">Gestão de Ateliê</p>
+                   <h4 className="text-4xl lg:text-5xl font-black tracking-tighter leading-[0.9] text-foreground mb-8">
+                     Otimize sua <br/>Produção
+                   </h4>
+                   <p className="text-sm text-muted-foreground/50 font-medium leading-relaxed max-w-[240px]">
+                     Controle insumos, gerencie catálogo e acompanhe sua evolução artesanal em um só lugar.
+                   </p>
                 </div>
+              </div>
+
+              <div className="relative z-10">
+                <div className="space-y-4 mb-10">
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Controle de Estoque</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5 opacity-50">
+                    <div className="h-2 w-2 rounded-full bg-primary/40" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Gestão de Equipe</span>
+                  </div>
+                </div>
+                <Button className="w-full h-20 rounded-[2rem] premium-gradient font-black uppercase tracking-[0.2em] text-[10px] shadow-[0_20px_40px_rgba(var(--primary-rgb),0.3)] group-hover:scale-[1.02] transition-all duration-500">
+                  Expandir Ateliê
+                </Button>
               </div>
            </div>
         </div>
