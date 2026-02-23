@@ -20,13 +20,29 @@ const queryClient = new QueryClient();
 import Landing from "@/pages/Landing";
 
 import Sidebar from "@/components/Sidebar";
-import { Menu, X } from "lucide-react";
+import { Menu, X, WifiOff } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useOffline } from "@/hooks/useOffline";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 function AppRoutes() {
   const { user, loading, signOut } = useAuth();
   const isMobile = useIsMobile();
+  const isOffline = useOffline();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOffline) {
+      toast.error("Você está offline. O sistema continuará operando com dados em cache.", {
+        icon: <WifiOff className="h-4 w-4" />,
+        duration: Infinity,
+        id: "offline-toast",
+      });
+    } else {
+      toast.dismiss("offline-toast");
+    }
+  }, [isOffline]);
 
   if (loading) {
     return (
