@@ -137,7 +137,7 @@ export default function Ajustes() {
         <div className="absolute top-0 right-0 p-12 -mr-16 -mt-16 bg-primary/5 rounded-full blur-[100px]" />
         <div className="flex items-center gap-4 md:gap-6 relative z-10">
           <div className="flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-[1.5rem] md:rounded-[2rem] bg-white shadow-2xl border border-white/10 group overflow-hidden">
-            <img src="/logo.png" alt="Logo" className="h-10 md:h-12 object-contain transition-transform group-hover:scale-110" />
+            <img src="/logo.png?v=2" alt="Logo" className="h-10 md:h-12 object-contain transition-transform group-hover:scale-110" />
           </div>
           <div className="space-y-1">
             <h2 className="text-xl md:text-2xl font-black tracking-tight text-foreground uppercase">
@@ -156,8 +156,35 @@ export default function Ajustes() {
       <div className="glass p-6 rounded-[2rem] border-white/5">
         <h2 className="mb-3 text-sm font-bold uppercase tracking-widest text-primary">Sobre o App</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Partilha Pro é sua ferramenta definitiva para controle de oficinas e produções sob demanda. 
+          Mestre Ateliê é sua ferramenta definitiva para controle de oficinas e produções sob demanda. 
         </p>
+      </div>
+
+      <div className="glass p-6 rounded-[2rem] border-white/5 bg-primary/[0.02]">
+        <h2 className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary">Instalar como App</h2>
+        <div className="space-y-4">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Tenha acesso rápido direto da sua tela inicial e use o sistema mesmo offline.
+          </p>
+          
+          <div className="space-y-3">
+            <p className="text-[10px] font-bold text-foreground flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-primary">1</span>
+              No iPhone (iOS): Use o Safari
+            </p>
+            <p className="text-[10px] text-muted-foreground ml-7 leading-relaxed">
+              Toque no botão <span className="font-bold text-foreground">Compartilhar</span> (ícone de quadrado com seta para cima) e selecione <span className="font-bold text-foreground underline italic">"Adicionar à Tela de Início"</span>.
+            </p>
+            
+            <p className="text-[10px] font-bold text-foreground flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-primary">2</span>
+              No Android (Chrome)
+            </p>
+            <p className="text-[10px] text-muted-foreground ml-7 leading-relaxed">
+              Toque nos 3 pontos ao lado da barra de endereço e selecione <span className="font-bold text-foreground italic">"Instalar aplicativo"</span>.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">

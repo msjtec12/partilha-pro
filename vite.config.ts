@@ -18,12 +18,14 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
-        name: "Partilha Pro",
-        short_name: "Partilha Pro",
+        id: "/",
+        name: "Mestre Ateliê",
+        short_name: "Mestre Ateliê",
         description: "Sistema de Gerenciamento para o seu Ateliê",
         theme_color: "#000000",
         background_color: "#000000",
         display: "standalone",
+        orientation: "portrait",
         start_url: "/",
         icons: [
           {
@@ -40,7 +42,7 @@ export default defineConfig(({ mode }) => ({
             src: "pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "maskable",
           },
         ],
       },

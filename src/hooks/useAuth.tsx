@@ -179,7 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     profile,
     plan: (profile?.plan as 'free' | 'pro') || 'free',
-    workshopName: profile?.workshop_name || 'Partilha Pro',
+    workshopName: profile?.workshop_name || 'Mestre Ateliê',
     fullName: profile?.full_name || '',
     proLaborePercent: profile?.pro_labore_percent || 50,
     loading,

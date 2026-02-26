@@ -6,7 +6,7 @@ export const exportToPDF = (title: string, data: any[], columns: { header: strin
   const doc = new jsPDF() as any;
 
   doc.setFontSize(18);
-  doc.text('Partilha Pro - Relatório', 14, 22);
+  doc.text('Mestre Ateliê - Relatório', 14, 22);
   
   doc.setFontSize(11);
   doc.setTextColor(100);
@@ -32,5 +32,5 @@ export const exportToPDF = (title: string, data: any[], columns: { header: strin
     margin: { top: 40 },
   });
 
-  doc.save(`partilha-pro-${title.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+  doc.save(`mestre-atelie-${title.toLowerCase().replace(/\s+/g, '-')}.pdf`);
 };

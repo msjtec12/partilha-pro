@@ -50,9 +50,9 @@ export default function Auth() {
       <div className="w-full max-w-sm glass p-10 rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] animate-slide-up relative z-10 border-white/5">
         <div className="mb-10 text-center">
           <div className="mx-auto mb-6 flex h-20 w-auto items-center justify-center">
-            <img src="/logo.png" alt="Partilha Pro Logo" className="h-20 object-contain drop-shadow-2xl" />
+            <img src="/logo.png?v=2" alt="Mestre Ateliê Logo" className="h-20 object-contain drop-shadow-2xl" />
           </div>
-          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">Partilha Pro</h1>
+          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">Mestre Ateliê</h1>
           <p className="mt-2 text-xs font-bold uppercase tracking-widest text-primary/60 italic">
             {isLogin ? 'Sua oficina, seu império.' : 'A jornada oficial começa aqui.'}
           </p>

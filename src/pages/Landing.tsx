@@ -15,10 +15,10 @@ export default function Landing() {
       <nav className="relative z-50 flex items-center justify-between px-10 py-10 max-w-7xl mx-auto">
         <div className="flex items-center gap-4 group cursor-pointer">
           <div className="h-14 w-14 glass rounded-[1.25rem] flex items-center justify-center p-3 shadow-2xl border-white/5 bg-white/[0.03] group-hover:bg-white/[0.08] transition-all">
-            <img src="/logo.png" alt="Logo" className="h-full object-contain" />
+            <img src="/logo.png?v=2" alt="Logo" className="h-full object-contain" />
           </div>
           <span className="text-2xl font-black tracking-tighter uppercase leading-none">
-            PARTILHA <span className="text-primary italic">PRO</span>
+            MESTRE <span className="text-primary italic">ATELIÊ</span>
           </span>
         </div>
         <div className="hidden lg:flex items-center gap-10 text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
@@ -78,7 +78,7 @@ export default function Landing() {
               <div className="aspect-[4/5] md:aspect-square overflow-hidden rounded-[3.25rem] relative">
                 <img 
                   src="/mockup.png" 
-                  alt="Partilha Pro Mockup" 
+                  alt="Mestre Ateliê Mockup" 
                   className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
@@ -136,7 +136,7 @@ export default function Landing() {
             <img src="/logo.png" alt="Logo" className="h-full object-contain grayscale opacity-50" />
           </div>
         </div>
-        <p className="text-[11px] font-black tracking-[0.6em] uppercase text-muted-foreground/30 mb-2">PARTILHA PRO © 2024</p>
+        <p className="text-[11px] font-black tracking-[0.6em] uppercase text-muted-foreground/30 mb-2">MESTRE ATELIÊ © 2024</p>
         <p className="text-[10px] uppercase tracking-widest text-primary/30 font-bold italic">A excelência em cada detalhe, como sua arte.</p>
       </footer>
     </div>
