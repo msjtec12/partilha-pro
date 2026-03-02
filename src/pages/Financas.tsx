@@ -12,7 +12,8 @@ import { cn } from '@/lib/utils';
 import { Plus, Trash2, FileText, Share2, Download, TrendingUp, TrendingDown, DollarSign, PieChart, Calendar as CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth, subMonths, subDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 import { ptBR } from 'date-fns/locale';
 
 interface Despesa {
@@ -48,7 +49,10 @@ export default function Financas() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [closingDialogOpen, setClosingDialogOpen] = useState(false);
-  const [referenceDate, setReferenceDate] = useState<Date>(new Date());
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: new Date()
+  });
   const [form, setForm] = useState({ descricao: '', valor: '', categoria: 'Produtos' });
   const [summary, setSummary] = useState({ faturamento: 0, custos: 0, despesas: 0, lucro: 0 });
 
@@ -147,36 +151,36 @@ export default function Financas() {
   };
 
   const handleGerarFechamento = async () => {
-    if (!user) return;
+    if (!user || !dateRange?.from || !dateRange?.to) return;
     setLoading(true);
 
-    const now = referenceDate;
-    now.setHours(23, 59, 59, 999);
+    const fromDate = new Date(dateRange.from);
+    fromDate.setHours(0, 0, 0, 0);
     
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    const toDate = new Date(dateRange.to);
+    toDate.setHours(23, 59, 59, 999);
 
     const { data: encomendas } = await supabase
       .from('pedidos')
       .select('valor, custo, status')
       .eq('user_id', user.id)
       .in('status', ['Entregue', 'Recebido'])
-      .gte('created_at', startOfMonth.toISOString())
-      .lte('created_at', now.toISOString());
+      .gte('created_at', fromDate.toISOString())
+      .lte('created_at', toDate.toISOString());
 
     const { data: despesasData } = await supabase
       .from('despesas')
       .select('valor')
       .eq('user_id', user.id)
-      .gte('data', startOfMonth.toISOString().split('T')[0])
-      .lte('data', now.toISOString().split('T')[0]);
+      .gte('data', fromDate.toISOString().split('T')[0])
+      .lte('data', toDate.toISOString().split('T')[0]);
 
     const totalEncValue = encomendas?.reduce((s, e) => s + Number(e.valor), 0) ?? 0;
     const totalEncCost = encomendas?.reduce((s, e) => s + Number(e.custo || 0), 0) ?? 0;
     const totalDesp = despesasData?.reduce((s, d) => s + Number(d.valor), 0) ?? 0;
     const lucro = Math.max(totalEncValue - (totalEncCost + totalDesp), 0);
 
-    const periodo = `${startOfMonth.toLocaleDateString('pt-BR')} - ${now.toLocaleDateString('pt-BR')}`;
+    const periodo = `${fromDate.toLocaleDateString('pt-BR')} - ${toDate.toLocaleDateString('pt-BR')}`;
     const reservePercent = 100 - proLaborePercent;
 
     const { error } = await supabase.from('fechamentos').insert({
@@ -185,7 +189,7 @@ export default function Financas() {
       lucro_total: lucro,
       minha_parte: lucro * (proLaborePercent / 100),
       parte_loja: lucro * (reservePercent / 100),
-      data: now.toISOString().split('T')[0]
+      data: toDate.toISOString().split('T')[0]
     });
 
     if (error) {
@@ -208,6 +212,16 @@ export default function Financas() {
     await supabase.from('despesas').delete().eq('id', id);
     toast({ title: 'Despesa removida' });
     fetchDespesas();
+  };
+
+  const handleDeleteFechamento = async (id: string) => {
+    const { error } = await supabase.from('fechamentos').delete().eq('id', id);
+    if (error) {
+      toast({ title: 'Erro ao excluir', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Fechamento excluído' });
+      fetchFechamentos();
+    }
   };
 
   return (
@@ -352,26 +366,66 @@ export default function Financas() {
                   <DialogTitle className="text-3xl font-black tracking-tighter">Escolher Data</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6">
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-[9px] h-7 rounded-lg border-white/5 bg-white/5 font-black uppercase"
+                      onClick={() => setDateRange({ from: startOfMonth(new Date()), to: new Date() })}
+                    >
+                      Mês Atual
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-[9px] h-7 rounded-lg border-white/5 bg-white/5 font-black uppercase"
+                      onClick={() => {
+                        const lastMonth = subMonths(new Date(), 1);
+                        setDateRange({ from: startOfMonth(lastMonth), to: endOfMonth(lastMonth) });
+                      }}
+                    >
+                      Mês Passado
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-[9px] h-7 rounded-lg border-white/5 bg-white/5 font-black uppercase"
+                      onClick={() => setDateRange({ from: subDays(new Date(), 30), to: new Date() })}
+                    >
+                      Últimos 30 dias
+                    </Button>
+                  </div>
+
                   <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-2">DATA DE REFERÊNCIA</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-2">PERÍODO DE APURAÇÃO</p>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           className={cn(
-                            "h-14 w-full rounded-2xl border-white/10 bg-white/10 px-6 font-bold text-left justify-start gap-4 hover:bg-white/20 transition-all",
-                            !referenceDate && "text-muted-foreground"
+                            "h-14 w-full rounded-2xl border-white/10 bg-white/10 px-6 font-bold text-left justify-start gap-4 hover:bg-white/20 transition-all text-xs",
+                            !dateRange && "text-muted-foreground"
                           )}
                         >
                           <CalendarIcon className="h-5 w-5 opacity-50" />
-                          {referenceDate ? format(referenceDate, "PPP", { locale: ptBR }) : <span>Selecione a data</span>}
+                          {dateRange?.from ? (
+                            dateRange.to ? (
+                              <>
+                                {format(dateRange.from, "dd/MM/yy")} - {format(dateRange.to, "dd/MM/yy")}
+                              </>
+                            ) : (
+                              format(dateRange.from, "dd/MM/yy")
+                            )
+                          ) : (
+                            <span>Selecione o período</span>
+                          )}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0 rounded-2xl border-white/10 glass" align="start">
                         <Calendar
-                          mode="single"
-                          selected={referenceDate}
-                          onSelect={(date) => date && setReferenceDate(date)}
+                          mode="range"
+                          selected={dateRange}
+                          onSelect={setDateRange}
                           initialFocus
                           locale={ptBR}
                         />
@@ -380,15 +434,17 @@ export default function Financas() {
                   </div>
                   
                   <div className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-2">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">Período Selecionado:</p>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">Resumo do Período:</p>
                     <p className="font-bold text-sm text-primary/80">
-                      01/{format(referenceDate, "MM/yyyy")} - {format(referenceDate, "dd/MM/yyyy")}
+                      {dateRange?.from && dateRange?.to ? (
+                        `${format(dateRange.from, "dd/MM/yyyy")} até ${format(dateRange.to, "dd/MM/yyyy")}`
+                      ) : "Selecione as datas inicial e final"}
                     </p>
                   </div>
 
                   <Button 
                     onClick={handleGerarFechamento} 
-                    disabled={loading} 
+                    disabled={loading || !dateRange?.from || !dateRange?.to} 
                     className="h-16 w-full rounded-full premium-gradient font-black uppercase tracking-tighter shadow-2xl shadow-primary/30"
                   >
                     {loading ? 'PROCESSANDO...' : 'CONFIRMAR FECHAMENTO'}
@@ -413,9 +469,14 @@ export default function Financas() {
                   <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mb-2 md:mb-3 italic">Ciclo Artisanal</p>
                   <p className="text-xs md:text-sm font-black text-muted-foreground/50 tracking-tight">{f.periodo}</p>
                 </div>
-                <button onClick={() => handleShare(f)} className="h-10 w-10 md:h-12 md:w-12 rounded-[1rem] md:rounded-2xl bg-white/5 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex items-center justify-center border border-white/5">
-                  <Share2 className="h-4 w-4 md:h-5 md:w-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => handleDeleteFechamento(f.id)} className="h-10 w-10 md:h-12 md:w-12 rounded-[1rem] md:rounded-2xl bg-white/5 text-rose-500/40 hover:bg-rose-500/10 hover:text-rose-500 transition-all flex items-center justify-center border border-white/5">
+                    <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                  </button>
+                  <button onClick={() => handleShare(f)} className="h-10 w-10 md:h-12 md:w-12 rounded-[1rem] md:rounded-2xl bg-white/5 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex items-center justify-center border border-white/5">
+                    <Share2 className="h-4 w-4 md:h-5 md:w-5" />
+                  </button>
+                </div>
               </div>
               
               <div className="mb-8 md:mb-12 relative z-10">
