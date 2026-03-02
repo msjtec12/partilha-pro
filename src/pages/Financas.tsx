@@ -9,7 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { Plus, Trash2, FileText, Share2, Download, TrendingUp, TrendingDown, DollarSign, PieChart } from 'lucide-react';
+import { Plus, Trash2, FileText, Share2, Download, TrendingUp, TrendingDown, DollarSign, PieChart, Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface Despesa {
   id: string;
@@ -43,6 +47,8 @@ export default function Financas() {
   const [fechamentos, setFechamentos] = useState<Fechamento[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [closingDialogOpen, setClosingDialogOpen] = useState(false);
+  const [referenceDate, setReferenceDate] = useState<Date>(new Date());
   const [form, setForm] = useState({ descricao: '', valor: '', categoria: 'Produtos' });
   const [summary, setSummary] = useState({ faturamento: 0, custos: 0, despesas: 0, lucro: 0 });
 
@@ -144,21 +150,26 @@ export default function Financas() {
     if (!user) return;
     setLoading(true);
 
-    const now = new Date();
+    const now = referenceDate;
+    now.setHours(23, 59, 59, 999);
+    
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    startOfMonth.setHours(0, 0, 0, 0);
 
     const { data: encomendas } = await supabase
       .from('pedidos')
       .select('valor, custo, status')
       .eq('user_id', user.id)
       .in('status', ['Entregue', 'Recebido'])
-      .gte('created_at', startOfMonth.toISOString());
+      .gte('created_at', startOfMonth.toISOString())
+      .lte('created_at', now.toISOString());
 
     const { data: despesasData } = await supabase
       .from('despesas')
       .select('valor')
       .eq('user_id', user.id)
-      .gte('data', startOfMonth.toISOString().split('T')[0]);
+      .gte('data', startOfMonth.toISOString().split('T')[0])
+      .lte('data', now.toISOString().split('T')[0]);
 
     const totalEncValue = encomendas?.reduce((s, e) => s + Number(e.valor), 0) ?? 0;
     const totalEncCost = encomendas?.reduce((s, e) => s + Number(e.custo || 0), 0) ?? 0;
@@ -174,6 +185,7 @@ export default function Financas() {
       lucro_total: lucro,
       minha_parte: lucro * (proLaborePercent / 100),
       parte_loja: lucro * (reservePercent / 100),
+      data: now.toISOString().split('T')[0]
     });
 
     if (error) {
@@ -181,6 +193,7 @@ export default function Financas() {
     } else {
       toast({ title: 'Fechamento realizado!' });
       fetchFechamentos();
+      setClosingDialogOpen(false);
     }
     setLoading(false);
   };
@@ -328,9 +341,61 @@ export default function Financas() {
                 <Download className="h-5 w-5" />
               </Button>
             )}
-            <Button size="lg" onClick={handleGerarFechamento} disabled={loading} className="h-14 px-8 gap-3 rounded-full bg-foreground text-background font-black uppercase tracking-tighter text-xs shadow-2xl transition-all hover:scale-105 active:scale-95">
-              <FileText className="h-5 w-5" /> {loading ? 'GERANDO...' : 'FECHAR MÊS ATUAL'}
-            </Button>
+            <Dialog open={closingDialogOpen} onOpenChange={setClosingDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg" className="h-14 px-8 gap-3 rounded-full bg-foreground text-background font-black uppercase tracking-tighter text-xs shadow-2xl transition-all hover:scale-105 active:scale-95">
+                  <FileText className="h-5 w-5" /> FECHAR PERÍODO
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="rounded-[3rem] border-white/10 glass p-10 max-w-md">
+                <DialogHeader className="mb-6">
+                  <DialogTitle className="text-3xl font-black tracking-tighter">Escolher Data</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-2">DATA DE REFERÊNCIA</p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "h-14 w-full rounded-2xl border-white/10 bg-white/10 px-6 font-bold text-left justify-start gap-4 hover:bg-white/20 transition-all",
+                            !referenceDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="h-5 w-5 opacity-50" />
+                          {referenceDate ? format(referenceDate, "PPP", { locale: ptBR }) : <span>Selecione a data</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 rounded-2xl border-white/10 glass" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={referenceDate}
+                          onSelect={(date) => date && setReferenceDate(date)}
+                          initialFocus
+                          locale={ptBR}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">Período Selecionado:</p>
+                    <p className="font-bold text-sm text-primary/80">
+                      01/{format(referenceDate, "MM/yyyy")} - {format(referenceDate, "dd/MM/yyyy")}
+                    </p>
+                  </div>
+
+                  <Button 
+                    onClick={handleGerarFechamento} 
+                    disabled={loading} 
+                    className="h-16 w-full rounded-full premium-gradient font-black uppercase tracking-tighter shadow-2xl shadow-primary/30"
+                  >
+                    {loading ? 'PROCESSANDO...' : 'CONFIRMAR FECHAMENTO'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
