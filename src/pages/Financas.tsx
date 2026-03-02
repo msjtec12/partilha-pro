@@ -81,7 +81,7 @@ export default function Financas() {
       .from('pedidos')
       .select('valor, custo')
       .eq('user_id', user.id)
-      .eq('status', 'Recebido')
+      .in('status', ['Entregue', 'Recebido'])
       .gte('created_at', startOfMonth);
 
     const { data: dData } = await supabase
